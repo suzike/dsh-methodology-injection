@@ -1,7 +1,9 @@
 node_modules/
-lib/
+/lib/
 *.map
 docs/shots/*.tmp
 state.json
 *.log
 .DS_Store
+.review-tmp/
+.playwright-mcp/

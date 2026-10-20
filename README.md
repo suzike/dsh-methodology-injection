@@ -74,7 +74,8 @@ npm install && npm run build
 ```
 
 ```jsonc
-// 3. 登记到 web profile：~/.dsh/profiles/web/package.json
+// 3. 登记到你正在用的 profile（多 profile 时以 `dsh web`/desktop 实际加载的那个为准，
+//    本机是 ~/.dsh/profiles/desktop/package.json）
 {
   "dependencies": {
     "dsh-methodology-injection": "link:../../plugins/dsh-methodology-injection"
@@ -91,12 +92,13 @@ npm install && npm run build
 ```
 
 ```bash
-# 4. 让 node_modules 看得见它（Windows 用 mklink /J，类 Unix 用 ln -s）
-#    ~/.dsh/profiles/web/node_modules/dsh-methodology-injection
+# 4. 让 node_modules 看得见它（Windows 用 mklink /J 建 junction，类 Unix 用 ln -s）
+#    ~/.dsh/profiles/<profile>/node_modules/dsh-methodology-injection
 #      -> ~/.dsh/plugins/dsh-methodology-injection
 ```
 
-5. **重启 DSH**，然后刷新页面。
+5. **首次装包不必重启**：在插件管理里启用（或直接让 Host 重读 profile）后路由即刻可用，刷新页面就能看到 `✦ 方法`。
+6. **但改过 `src/**` 或 `lib/**` 之后必须整机重启 DSH**：本插件不支持热重载——旧的 exact 路由还占着名字，重挂会报 `webserver: duplicate exact route "/api/methodology.state"`，插件进入 `application: "failed"`。
 
 > 客户端 bundle 不热替换：改了 `src/client/` 里的东西，需要重新 `npm run build` 再刷新页面。
 
@@ -108,17 +110,20 @@ npm install && npm run build
 
 <img src="docs/assets/flow.svg" alt="注入链路" width="100%"/>
 
-四段纯文本，逐字节稳定（同一方法论每次生成的注入文本完全一致，便于做前缀缓存）：
+四段纯文本，逐字节稳定（同一方法论每次生成的注入文本完全一致，便于做前缀缓存）。真实注入文本没有任何装饰——首行是机器可读的标记，其余四段原样单换行：
 
-```
-【方法论】金字塔原理
+```text
+[[METHOD:pyramid]]
 先给结论，再用分组论据自上而下支撑。
-1. 先写结论，不铺垫任何背景
-2. 分组列论据，同层同粒度
-3. 按一种顺序排列同层并注明
-4. 不引入未归组的新观点
-结构：结论 ├论据1→依据 ├论据2→依据 └论据3→依据
-篇幅：每点一行，不写开场与复述。
+先写结论，不铺垫任何背景
+分组列论据，同层同粒度
+按一种顺序排列同层并注明
+不引入未归组的新观点
+结论
+├论据1→依据
+├论据2→依据
+└论据3→依据
+每点一行，不写开场与复述。
 ```
 
 技术上有四个刻意的决定：
@@ -126,8 +131,8 @@ npm install && npm run build
 | 决定 | 为什么 |
 | --- | --- |
 | 走 `systemPrompt.context`（`order: 230`、`interpolate: false`） | 不进用户气泡、不改写你的原话；空串即等于没选，天然零成本 |
-| `agent/pre-step` 最多兜底补一次 | 契约被折成 runtime-context 后可能被去重吃掉，兜底保证「选了就一定到」；只补一次，不叠加 |
-| 只对会话根 agent 注入 | 子 agent 是执行单元，不该被方法论二次塑形 |
+| `agent/pre-step` 兜底，条件严格 | 只在主通道这次没产出文本（`stage: context-miss`）、且是本轮第一步、且 pendingTurn 等于当前 turn、且该会话从未验证成功时才补一次；文本去重只跳过**完全相同**的重复，不会漏 |
+| 按 sessionId 精确匹配 | arm 写入的 sessionId 必须等于本次装配的 `agent.id`，子 agent 因为 id 不同天然被排除，不做额外判断 |
 | 超过预算直接拒绝 arm | 150 token 是硬上限，宁可提示你换一个，也不悄悄截断 |
 
 `GET /api/methodology.diagnostics` 会给出最近一次注入的真实落点（`channel`、`landed`、`stage`、`tokenEstimate`、`contractHash`），所以「静默没生效」是可查的，不是玄学。
@@ -286,12 +291,15 @@ PROBE.md      真实的扩展点契约勘察报告（为什么这么接，全在
 | `npm run verify` | typecheck 0 error；build 通过；`node --test` **25 pass / 0 fail** |
 | 目录校验 | 65 条全部落在 150 token 预算内（正文 83–117） |
 
-已知未在本机复现的一步：**armer → 用户发送 → `lastInjection.landed: true`** 的完整闭环，需要一次真实用户回合才能观测（arming 之后、消息发出之前，`stage` 停在 `armed` 是预期行为）。用一下就知道：
+**一个真被抓住的 bug（0.1.0 已修）**：arm 之后下一轮静默不注入。根因是 `armedForTurn` 用「上一轮 + 1」猜，而插件常常在会话已经走过几轮之后才被看见——猜早了一轮，`turn` 模式又要求精确相等，于是永不命中，还会被 turn 起始的过期剪枝删掉。修法是命中条件从 `===` 放宽到 `<=`，删掉 turn 起始的剪枝，单次消费仍由 turn 结束时的清理保证（`src/lib/store.ts`）。
+
+**还剩一步需要一次真实用户回合**：`arm → 发送 → lastInjection.landed: true` 的闭环必须在重启 DSH 之后由人发一句话才能观测（arming 之后、消息发出之前，`stage` 停在 `armed` 是预期行为）。自测命令：
 
 ```bash
-# 选一个方法论，随便发一句话，然后看
 curl -s http://127.0.0.1:60880/api/methodology.diagnostics | grep -o '"landed":[a-z]*'
 ```
+
+若仍为 `false`，把 `lastInjection.stage` 一并带出来即可定位到具体环节（`armed → assembled → landed` 或 `context-miss`）。
 
 ---
 

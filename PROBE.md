@@ -179,17 +179,21 @@ ctx.effect(() => ctx.webServer.register({
 
 ---
 
-## 2. 仍未验证（必须装包后实测，不许猜）
+## 2. U1–U5 实测结果（装包后回写，2026-10-20）
 
-| # | 未知 | 为什么要紧 | 怎么验 |
-|---|---|---|---|
-| U1 | `InputActions` 的方法名 | 决定能否把方法论名写回草稿 / 能否主动提交 | 装包后 `Object.keys(props.inputActions)` 打到 console |
-| U2 | `InputState` 的字段 | 决定自动推荐能否读草稿原文 | 同上，dump 一次 |
-| U3 | 子 agent 是否也触发我们的 context | 若触发，子 agent 也会被塞方法论 | spawn 一个子 agent，看它的请求里有没有 |
-| U4 | `install_bundle` 是否要求重启 DSH | 决定交付流程 | 装一次看 `nextStep` 字段 |
-| U5 | `.module.css` 是否被 client bundle 支持 | 决定样式方案 | 看 `shared/tsdown.client.ts` 能不能编译过 |
+原计划要装包后实测的五条，现全部有结论。**取证口径**：本机正在运行的 DSH 由 `D:\Software\DSH\resources\app.asar` 启动（进程 PID 44860，参数含 `...app.asar\dsh ... C:\Users\Lenovo\.dsh\profiles\desktop`），因此「装包后的真实实现」= 该 asar 解包副本 `/tmp/dsh-src/dsh/node_modules/@deepseek-ai/*`。带行号的引用都指这份**随包编译产物**，不是记忆、不是猜测。
 
-**U1/U2 不解决，T3 的设计不能冻结；U3 不解决，T2 有污染子 agent 的风险。**
+| # | 结论 | 实测证据 |
+|---|---|---|
+| U1 | **`inputActions` 有 8 个方法**：`captureInsertion()` / `insertText(text, span)` / `setDraft(text)` / `persistDraft()` / `addAttachments(ids)` / `removeAttachment(id)` / `pruneAttachments(ids)` / `submit()` | `dsh-client-ui-conversation/lib/client.js:14911-14940`，`SessionInputShell` 的 `actions = {…}`（注释：「The public provide-channel action face (one stable identity per session)」）。`insertText` 要求 `span.draftRev === this.rev`，否则返回 `false`；`submit()` 等价 `submit("queue")` |
+| U2 | **`InputState` 有 7 个字段**：`draft: string`（纯文本草稿）/ `attachmentIds: string[]` / `draftRev: number` / `phase: "plain" \| "claimed" \| "adjudicating" \| "submitting"` / `claim?`（仅 adjudicating 期出现）/ `occurrences`（草稿里的 chip/命令出现位置）/ `queue`（下一轮队列） | `lib/client.js:15674-15686` 的 `compose()` 返回对象即发布快照；`phase` 取值见 `:5076` `phase = "plain"`、`:5124` `"plain" \| "claimed"`、`:5172` `"submitting"`、`:5184` `"adjudicating"`。→ **读草稿被证实可行：`useInput().draft` 就是纯文本**，不需要解析 DOM |
+| U3 | **子 agent 不会被注入**（按构造封闭 + 差动单测；未用「真的 spawn 一个子 agent」证：本会话 delegation depth = 0，spawn 被环境禁止） | 唯一注入判据是 `armed.get(agent.id)`（`src/lib/inject.ts` 的 `text(assembly)` 取 `assembly.agent.id`），而 arm 只由 UI 的 `props.sessionId` 写入（`src/lib/http.ts` 的 `/api/methodology.arm` 必填 sessionId）；子 agent 的 `agent.id` 是另一个 SessionId（§1.1），因此命中不了。差动证据：`tests/host.test.mjs` 断言「arm 会话 A 后，会话 B 的 assembly 渲染为空串」。**残余风险**：若将来把 arm 改成「按 workspace/全局共享」这条结论立即失效，改时须重测 |
+| U4 | **不要求重启，热生效**；但**浏览器半边要刷新页面**才能加载新 client bundle | 本机实测：`plugin_manager set_bundle(enabled=true, target=dsh-methodology-injection)` → `{"stage":"enable","application":"applied","changed":false,"warnings":["experimental-inspector …"]}`；随后**未重启**直接 `curl http://127.0.0.1:60880/api/methodology.diagnostics` → `200 {"ok":true,"armedSessions":0,"catalogSize":65,"version":"0.1.0","contractRegistered":true,"contextOrder":230,"catalogPath":"E:\\…\\catalog\\methods.json","statePath":"C:\\Users\\Lenovo\\.dsh\\dsh-methodology-injection\\state.json","stateBytes":0,"historySize":0,"lastInjection":null,"sessions":[]}`。注意 `nextStep` 字段**首次 install 失败时**出现过（`"Retry with a published version."`，见 README 的装包一节），`application: applied` 则代表已进入运行树 |
+| U5 | **`.module.css` 不被本插件的 client 构建链支持，也不被依赖**；产物里 0 个 `.css` | `shared/tsdown.client.ts` 文件头注释原文：「the CSS-modules branch is dropped because this plugin injects its handful of rules from a TypeScript string and imports no `.module.css`」；构建产物 `lib/` 只有 `client.js` / `client.js.map`（及 host 侧 js），无任何 css 资产；样式一律走 `style[data-dsh-plugin-css]` 注入（t3 交付，测试扫源码断言无色值字面量） |
+
+**原问题（已全部回答，留档）**：U1 `InputActions` 的方法名；U2 `InputState` 的字段；U3 子 agent 是否也触发我们的 context；U4 `install_bundle` 是否要求重启；U5 `.module.css` 是否被 client bundle 支持。
+
+**这条链上仍未闭环的一条（与 U1–U5 无关，单列）**：注入块是否真的落进**真实会话 JSONL**。它需要一次真实对话轮次；本轮环境里没有可授权的 UI 通道（见 t5 报告：`/` 返回 401，因为 shell 要 `dsh web` 打印的带 token URL；`/api/*` 反而开放）。给出可复现的验证步骤写进 README「验收」一节，由能操作 GUI 的人执行一次即可闭环。
 
 ---
 
