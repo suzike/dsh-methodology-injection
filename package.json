@@ -1,0 +1,58 @@
+{
+  "name": "dsh-methodology-injection",
+  "version": "0.1.0",
+  "description": "在 DSH 输入框注入方法论契约：选中一种方法论 → 本轮对话按该方法论作答 → 留痕可回溯。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": {
+      "default": "./lib/client.js"
+    },
+    "./locale/*.json": "./locale/*.json",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "catalog",
+    "locale",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "~4.0.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "~4.0.5",
+    "@types/node": "^22.10.2",
+    "@types/react": "~18.3.1",
+    "@types/react-dom": "~18.3.5",
+    "react": "~18.3.1",
+    "react-dom": "~18.3.1",
+    "tsdown": "0.22.2",
+    "typescript": "~5.7.2"
+  },
+  "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('lib',{recursive:true,force:true})\"",
+    "build": "npm run clean && npm run build:host && npm run build:client && node scripts/copy-catalog.mjs",
+    "build:host": "tsc -p tsconfig.build.json",
+    "build:client": "tsdown",
+    "prepack": "npm run build",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.client.json --noEmit",
+    "test": "node --test \"tests/*.test.mjs\"",
+    "verify": "npm run typecheck && npm run build && npm test"
+  }
+}

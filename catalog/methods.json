@@ -1,0 +1,2603 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-10-20",
+  "injectionBudget": {
+    "maxTokens": 150,
+    "estimator": "CJK 每字计 1 token，其余字符每 4 个计 1 token（保守上限）",
+    "note": "PROBE.md §5 已把上限放宽到 400；T4 契约要求 150，此处取更严者。实际估算值见 validate-catalog 报告。"
+  },
+  "categories": [
+    {
+      "id": "expression",
+      "zh": "表达组织",
+      "en": "Expression & Organization",
+      "intent": "把已经有答案的东西讲清楚：先说什么、怎么分组、多长说完。"
+    },
+    {
+      "id": "understanding",
+      "zh": "理解拆解",
+      "en": "Understanding & Decomposition",
+      "intent": "把说不清的东西拆开：找边界、找根因、找真正的约束。"
+    },
+    {
+      "id": "reasoning",
+      "zh": "推理求解",
+      "en": "Reasoning & Solving",
+      "intent": "在信息不全时推进判断：演绎、溯因、更新概率、估量级。"
+    },
+    {
+      "id": "decision",
+      "zh": "决策判断",
+      "en": "Decision & Judgment",
+      "intent": "在多个可选动作之间做取舍，并说明取舍依据。"
+    },
+    {
+      "id": "innovation",
+      "zh": "创新设计",
+      "en": "Innovation & Design",
+      "intent": "在现成答案不够用时造出新选项，而不是把旧选项换个说法。"
+    },
+    {
+      "id": "interaction",
+      "zh": "交互引导",
+      "en": "Interaction & Facilitation",
+      "intent": "控制对话本身的形状：问什么、怎么问、怎么确认、怎么给反馈。"
+    }
+  ],
+  "methods": [
+    {
+      "id": "pyramid",
+      "zh": "金字塔原理",
+      "en": "Pyramid Principle",
+      "category": "expression",
+      "aliases": [
+        "结论先行",
+        "Minto 金字塔",
+        "自上而下表达",
+        "Pyramid Principle",
+        "金字塔结构"
+      ],
+      "oneliner": "结论先立，分组支撑，逻辑递进",
+      "inject": {
+        "positioning": "先给结论，再用分组论据自上而下支撑。",
+        "constraints": [
+          "先写结论，不铺垫任何背景",
+          "分组列论据，同层同粒度",
+          "按一种顺序排列同层并注明",
+          "不引入未归组的新观点"
+        ],
+        "skeleton": "结论\n├论据1→依据\n├论据2→依据\n└论据3→依据",
+        "lengthDiscipline": "每点一行，不写开场与复述。"
+      },
+      "display": {
+        "what": "结论先行、以上统下、归类分组、逻辑递进四原则构成的表达结构，由麦肯锡顾问 Barbara Minto 系统化。",
+        "whenToUse": "向上汇报、写方案、答追问——需要对方在三十秒内拿到主张，且愿意顺着你的结构往下看。",
+        "misuse": "把背景介绍当结论；同层论据粒度不一（一条是原因、一条是数据）；层级堆到四层以上，读者迷路。",
+        "source": "Barbara Minto, The Minto Pyramid Principle（1987；1973 年为麦肯锡内部教材）。"
+      },
+      "conflicts": [
+        "scqa",
+        "what-so-what",
+        "elevator"
+      ]
+    },
+    {
+      "id": "mece",
+      "zh": "MECE 原则",
+      "en": "MECE Principle",
+      "category": "expression",
+      "aliases": [
+        "逻辑树",
+        "相互独立完全穷尽",
+        "不重不漏",
+        "MECE",
+        "结构化拆解"
+      ],
+      "oneliner": "分类不重叠，合起来不漏项",
+      "inject": {
+        "positioning": "先把问题拆成不重不漏的几块再逐块回答。",
+        "constraints": [
+          "先声明拆分维度再列条目",
+          "拆同层条目，确保互不重叠",
+          "检查漏项并写明依据",
+          "每层不超过五项，多了升维"
+        ],
+        "skeleton": "维度：…\n①… ②… ③…\n漏项检查：…",
+        "lengthDiscipline": "只列层级，不解释维度定义。"
+      },
+      "display": {
+        "what": "Mutually Exclusive, Collectively Exhaustive：同一层的分类互相独立、合起来覆盖全集，是麦肯锡结构化拆解的基本功。",
+        "whenToUse": "要保证分析不留死角、或要给老板解释'为什么就这几块'时。",
+        "misuse": "把四个不同维度混成一层（时间、职能、地区并列）；为了穷尽不断加类，最后有十几个互不相干的条目；只做互斥不做穷尽。",
+        "source": "Barbara Minto, The Minto Pyramid Principle；麦肯锡结构化思维传统。"
+      },
+      "conflicts": [
+        "issue-tree"
+      ]
+    },
+    {
+      "id": "scqa",
+      "zh": "SCQA 框架",
+      "en": "SCQA Framework",
+      "category": "expression",
+      "aliases": [
+        "情境冲突疑问回答",
+        "序言结构",
+        "SCQA",
+        "开场四步"
+      ],
+      "oneliner": "情境冲突起问，回答收口",
+      "inject": {
+        "positioning": "用情境-冲突-疑问-回答四步把话说到点上。",
+        "constraints": [
+          "先写情境，只放对方已认同的事实",
+          "写冲突点为一句可证伪的落差",
+          "把疑问写成对方会问的原话",
+          "把回答放在最后一段首句"
+        ],
+        "skeleton": "S 情境：…\nC 冲突：…\nQ 疑问：…\nA 回答：…",
+        "lengthDiscipline": "四段各一句，不加第五段。"
+      },
+      "display": {
+        "what": "金字塔原理里的序言结构：先铺双方都认的情境，再点出打破平衡的冲突，让问题自然浮出，最后给回答。",
+        "whenToUse": "对方还没意识到问题时；需要说服而不是汇报时；提案、融资、对外沟通的开场。",
+        "misuse": "情境写成一整段公司简介；冲突是编出来的，对方根本不认；疑问和回答之间没有因果关系。",
+        "source": "Barbara Minto, The Minto Pyramid Principle（序言 SCQA 结构）。"
+      },
+      "conflicts": [
+        "pyramid"
+      ]
+    },
+    {
+      "id": "elevator",
+      "zh": "电梯演讲",
+      "en": "Elevator Pitch",
+      "category": "expression",
+      "aliases": [
+        "60秒电梯演讲",
+        "30秒电梯理论",
+        "elevator pitch",
+        "一分钟说清"
+      ],
+      "oneliner": "一句话主张，三点理由，一个请求",
+      "inject": {
+        "positioning": "六十秒内说清主张、三点理由和一个明确请求。",
+        "constraints": [
+          "先给主张，不报背景",
+          "只留三条理由，各一句",
+          "给出一个具体请求与时间点",
+          "控制全篇在一百五十字内"
+        ],
+        "skeleton": "主张：…｜理由：①…②…③…｜请求：…（何时）",
+        "lengthDiscipline": "超过三条理由就删，不加铺垫。"
+      },
+      "display": {
+        "what": "把提案压到一次电梯同乘的时间里说完的表达格式：主张、三条理由、一个具体请求。",
+        "whenToUse": "只有一分钟、对方职位高于你、或你需要当场拿到一个 yes/no 的时候。",
+        "misuse": "把公司历史当开场；理由列了七条等于没有重点；只说'希望能有机会合作'而没有可答应的具体请求。",
+        "source": "通说源自麦肯锡三十秒电梯理论，无单一原始文献；现代用法见各类 pitch 训练手册。"
+      },
+      "conflicts": [
+        "pyramid"
+      ]
+    },
+    {
+      "id": "star",
+      "zh": "STAR 结构",
+      "en": "STAR Method",
+      "category": "expression",
+      "aliases": [
+        "STAR 法则",
+        "情境任务行动结果",
+        "行为面试法",
+        "STAR"
+      ],
+      "oneliner": "情境任务行动结果，四段讲完一段经历",
+      "inject": {
+        "positioning": "用情境-任务-行动-结果还原一段经历。",
+        "constraints": [
+          "用一句交代情境、任务与约束",
+          "只写自己做的行动，用动词",
+          "给可核验的数字或对比作结果",
+          "补一句反思在结果后，不超一句"
+        ],
+        "skeleton": "S 情境：…\nT 任务：…\nA 行动：1)…2)…\nR 结果：数字…｜反思：…",
+        "lengthDiscipline": "行动不超过三步，不复述简历。"
+      },
+      "display": {
+        "what": "行为事件面试里还原真实经历的四段式：情境、任务、行动、结果，重点在'我具体做了什么'。",
+        "whenToUse": "面试、复盘、晋升答辩——任何要证明'我做过且有结果'的场合。",
+        "misuse": "情境占了大半篇幅；行动写成'我们团队做了'；结果只有'效果不错'没有数字；把 STAR 写成故事会。",
+        "source": "行为事件访谈（BEI）传统，通说归于 DDI 的结构化面试法；STAR 为其简写。"
+      },
+      "conflicts": [
+        "prep"
+      ]
+    },
+    {
+      "id": "prep",
+      "zh": "PREP 结构",
+      "en": "PREP Structure",
+      "category": "expression",
+      "aliases": [
+        "观点理由例证",
+        "PREP 法",
+        "四点表达",
+        "结论理由例子"
+      ],
+      "oneliner": "观点理由例证重申，四句一闭环",
+      "inject": {
+        "positioning": "观点-理由-例证-重申，四句一个小闭环。",
+        "constraints": [
+          "先给观点，不加限定",
+          "只给一条主因，不并列堆",
+          "用具体事例或数据作例证",
+          "只重申观点收尾，不加新内容"
+        ],
+        "skeleton": "P 观点：…\nR 理由：…\nE 例证：…\nP 重申：…",
+        "lengthDiscipline": "四句为限，不展开成段落。"
+      },
+      "display": {
+        "what": "Point-Reason-Example-Point：先抛观点，给一条理由，用一个具体例证支撑，最后重申观点。",
+        "whenToUse": "会议上被点名表态、答'你怎么看'、给建议但不想写长文时。",
+        "misuse": "理由和例证其实是同一句话；例证是他人的抽象结论而不是具体事实；重申时偷偷加进新观点。",
+        "source": "日式商务沟通教材通行的 PREP 法，常与金字塔原理并用。"
+      },
+      "conflicts": [
+        "star"
+      ]
+    },
+    {
+      "id": "what-so-what",
+      "zh": "事实-解读-行动",
+      "en": "What / So What / Now What",
+      "category": "expression",
+      "aliases": [
+        "事实解读行动",
+        "so what",
+        "三层反思",
+        "数据三问"
+      ],
+      "oneliner": "发生了什么，说明什么，接下来做什么",
+      "inject": {
+        "positioning": "三层说：事实、含义、下一步。",
+        "constraints": [
+          "只写观察到的数据在第一层，不解读",
+          "在第二层给一条因果解释",
+          "在第三层给可执行动作与负责人",
+          "分层写，不把三层混在同一段"
+        ],
+        "skeleton": "What：数据…\nSo what：意味着…\nNow what：动作…（谁/何时）",
+        "lengthDiscipline": "每层不超过三行，不重复数据。"
+      },
+      "display": {
+        "what": "把'数据'和'结论'强制分开的三层结构：先陈述事实，再解释含义，最后给出行动。",
+        "whenToUse": "数据复盘、周报、事故说明——最怕把观察和判断搅在一起的时候。",
+        "misuse": "第一层就夹带判断（'转化率暴跌说明产品不行'）；第二层给三个互相矛盾的解释；第三层只有'持续关注'。",
+        "source": "反思实践模型 What/So What/Now What，见 Rolfe, Freshwater & Jasper, Critical Reflection for Nursing（2001），可溯至 Borton（1970）。"
+      },
+      "conflicts": [
+        "pyramid"
+      ]
+    },
+    {
+      "id": "aarrr",
+      "zh": "AARRR 海盗指标",
+      "en": "AARRR Metrics",
+      "category": "expression",
+      "aliases": [
+        "海盗指标",
+        "增长漏斗",
+        "AARRR模型",
+        "五段漏斗"
+      ],
+      "oneliner": "五段漏斗定位增长卡在哪",
+      "inject": {
+        "positioning": "用五段漏斗定位增长卡在哪一段。",
+        "constraints": [
+          "先给五段各一个数值",
+          "只标出最窄的一段",
+          "每段给一个可改的杠杆",
+          "收尾只选一段做实验"
+        ],
+        "skeleton": "获客：n｜激活：n\n留存：n｜收入：n\n推荐：n\n最窄：…→ 杠杆：…",
+        "lengthDiscipline": "只诊断一段，不写全年方案。"
+      },
+      "display": {
+        "what": "把增长拆成获客、激活、留存、收入、推荐五段漏斗，用各段转化率找出最窄的一环，再一次只优化一段。",
+        "whenToUse": "产品有流量但不涨、要判断该投拉新还是修留存、或复盘一次增长实验时。",
+        "misuse": "五段都写要提升；跳过留存直接拉新；把指标当战略，列完数字不给杠杆。",
+        "source": "Dave McClure 2007 年 \"Startup Metrics for Pirates\" 提出的 AARRR 漏斗。"
+      },
+      "conflicts": [
+        "rice"
+      ]
+    },
+    {
+      "id": "first-principles",
+      "zh": "第一性原理",
+      "en": "First Principles Thinking",
+      "category": "understanding",
+      "aliases": [
+        "第一原理",
+        "拆到不可再分",
+        "从物理出发",
+        "First Principles"
+      ],
+      "oneliner": "拆到不可再分，再从零重建",
+      "inject": {
+        "positioning": "拆到不可再分的事实，再从那里重建方案。",
+        "constraints": [
+          "列出当前结论依赖的每一条假设",
+          "标出哪条是物理或成本硬约束",
+          "删掉仅因惯例存在的假设并说明",
+          "只用保留的事实重推结论"
+        ],
+        "skeleton": "硬事实：…（不可再分）\n惯例假设：…（可删）\n重建：…",
+        "lengthDiscipline": "只重推一步结论，不做全景推演。"
+      },
+      "display": {
+        "what": "把问题分解到不能再分解的事实层面，再从这些事实重新推导，而不是沿用'大家都这么做'的类比结论。",
+        "whenToUse": "成本结构被行业惯例锁死、现成方案贵得离谱、或有人说'这行就是这样'的时候。",
+        "misuse": "把'拆解'做成把方案拆成步骤；删掉假设后还是用原来的结论；把物理事实和商业判断混为一谈。",
+        "source": "亚里士多德《物理学》中的第一原理概念；现代商业用法经 Elon Musk 与 SpaceX 成本讨论普及。"
+      },
+      "conflicts": [
+        "reverse-engineering",
+        "analogy",
+        "assumption-busting"
+      ]
+    },
+    {
+      "id": "reverse-engineering",
+      "zh": "逆向工程",
+      "en": "Reverse Engineering",
+      "category": "understanding",
+      "aliases": [
+        "反推实现",
+        "从结果倒推",
+        "working backwards",
+        "拆解成品"
+      ],
+      "oneliner": "从成品倒推路径与关键决策",
+      "inject": {
+        "positioning": "从已有的结果倒推实现路径与关键决策。",
+        "constraints": [
+          "先描述成品可观测的行为",
+          "按功能块切分并标出接口",
+          "每块写出不这样做会怎样",
+          "标注哪些是事实哪些是推断"
+        ],
+        "skeleton": "结果：…\n← 功能块A（接口…）\n← 功能块B（接口…）\n关键决策：…",
+        "lengthDiscipline": "拆到可动手的粒度即停。"
+      },
+      "display": {
+        "what": "从已成型的产物（产品、代码、流程）反推它的结构、接口和当初的取舍，用来学习或复刻。",
+        "whenToUse": "要复刻竞品能力、接手别人的系统、或想搞清'他们为什么能做到这个成本'时。",
+        "misuse": "把逆向做成表面特征清单；把推断当事实写；只拆结构不拆取舍，复刻出来形似神不似。",
+        "source": "工程实践通称；商业上 Amazon 的 Working Backwards（2004 起 PR/FAQ 流程）是目标倒推的知名变体。"
+      },
+      "conflicts": [
+        "first-principles"
+      ]
+    },
+    {
+      "id": "issue-tree",
+      "zh": "议题树",
+      "en": "Issue Tree",
+      "category": "understanding",
+      "aliases": [
+        "问题树",
+        "议题拆解",
+        "issue tree",
+        "假设树",
+        "拆问题"
+      ],
+      "oneliner": "大问题拆成可验证子问题",
+      "inject": {
+        "positioning": "把大问题拆成可验证的子问题并逐层收敛。",
+        "constraints": [
+          "把根问题写成一句可判真假的话",
+          "只写命题作子节点，不写话题",
+          "每层按同一维度切分",
+          "标出当前最有价值的三个分支"
+        ],
+        "skeleton": "根问题：…？\n├子问题1（可验证：…）\n├子问题2（…）\n└优先分支：…",
+        "lengthDiscipline": "只展开到第三层，不铺满所有分支。"
+      },
+      "display": {
+        "what": "把待解决的问题逐层拆成可回答、可验证的子问题，形似树状，用来定位'到底卡在哪一支'。",
+        "whenToUse": "问题大到一个回答装不下、团队对'问题是什么'还没共识时。",
+        "misuse": "子节点写成'市场分析''竞品调研'这类话题而不是命题；每层换维度导致无法汇总；拆完不收敛，树越铺越大。",
+        "source": "麦肯锡问题解决法中的 issue tree；与 MECE 配套使用。"
+      },
+      "conflicts": [
+        "mece",
+        "hypothesis-driven"
+      ]
+    },
+    {
+      "id": "five-why",
+      "zh": "5 Whys 追问",
+      "en": "5 Whys",
+      "category": "understanding",
+      "aliases": [
+        "五个为什么",
+        "追问根因",
+        "连问五次",
+        "5why"
+      ],
+      "oneliner": "连问五次，问到可动手的根因",
+      "inject": {
+        "positioning": "连问五次为什么，直到原因可被直接消除。",
+        "constraints": [
+          "每层只回答一个原因",
+          "追到机制层，不停在人名或态度",
+          "查到可动手处即停，不凑次数",
+          "补写一句所以改什么"
+        ],
+        "skeleton": "现象→为什么①→…→为什么⑤\n根因：…\n对策：…",
+        "lengthDiscipline": "每层一行，不写讨论过程。"
+      },
+      "display": {
+        "what": "对一个问题连续追问'为什么'，每一层的答案成为下一层的问题，直到找到可以直接干预的机制性原因。",
+        "whenToUse": "事故复盘、质量缺陷、流程反复出错，且初步解释听起来像'某人不小心'时。",
+        "misuse": "把原因归到'员工培训不足''沟通不畅'就停；每层换一个方向导致链条断裂；机械凑满五次。",
+        "source": "丰田生产方式，通说归于丰田佐吉、大野耐一；见《丰田生产方式》（1978）。"
+      },
+      "conflicts": [
+        "toyota-a3"
+      ]
+    },
+    {
+      "id": "fishbone",
+      "zh": "鱼骨图",
+      "en": "Fishbone / Ishikawa Diagram",
+      "category": "understanding",
+      "aliases": [
+        "石川图",
+        "因果图",
+        "人机料法环",
+        "fishbone"
+      ],
+      "oneliner": "六个骨位并行找原因",
+      "inject": {
+        "positioning": "按人机料法环测六类并行找原因。",
+        "constraints": [
+          "先定一个具体结果作为鱼头",
+          "逐类列六个骨位，空也写无",
+          "每条原因标注可核实证据",
+          "圈出三条最可能并排优先级"
+        ],
+        "skeleton": "鱼头：问题…\n人｜机｜料｜法｜环｜测\n各骨→原因（证据…）\nTop3：…",
+        "lengthDiscipline": "每骨不超过三条，不展开论述。"
+      },
+      "display": {
+        "what": "以结果为鱼头、六类原因为鱼骨的因果枚举图，强制并行扫过所有原因类别，避免只盯最顺手的那一类。",
+        "whenToUse": "质量/故障分析的多因排查，尤其是团队容易过早锁定单一原因时。",
+        "misuse": "六类变成六句空话；原因与结果不在同一抽象层；画完图不排优先级，等于没分析。",
+        "source": "石川馨（Kaoru Ishikawa）1968 年提出，用于质量管理。"
+      },
+      "conflicts": []
+    },
+    {
+      "id": "system-loop",
+      "zh": "系统循环图",
+      "en": "Causal Loop Diagram",
+      "category": "understanding",
+      "aliases": [
+        "因果回路图",
+        "增强回路调节回路",
+        "系统动力学",
+        "CLD"
+      ],
+      "oneliner": "画增强与调节回路，看系统如何自转",
+      "inject": {
+        "positioning": "画出增强与调节回路，看系统如何自转。",
+        "constraints": [
+          "先写变量，用可升降的名词",
+          "每条箭头标出同向或反向",
+          "识别至少一个增强回路",
+          "标出延迟发生在哪一环"
+        ],
+        "skeleton": "变量：A B C\nA→(+)B→(+)A（增强 R1）\nB→(−)C（调节 B1｜延迟≈…）\n干预点：…",
+        "lengthDiscipline": "变量六个以内，回路三条以内。"
+      },
+      "display": {
+        "what": "用变量与带极性的箭头表示因果回路，区分自我强化的增强回路和自我限制的调节回路，并标出时间延迟。",
+        "whenToUse": "同一个问题反复出现、越用力越糟、或局部优化导致整体恶化时。",
+        "misuse": "把流程图当循环图（没有反馈箭头）；变量写成事件而不是可增减的量；忽略延迟，误判为'措施无效'。",
+        "source": "系统动力学，Jay Forrester（1961）；普及于 Peter Senge《第五项修炼》（1990）。"
+      },
+      "conflicts": []
+    },
+    {
+      "id": "stakeholder-map",
+      "zh": "利益相关者地图",
+      "en": "Stakeholder Map",
+      "category": "understanding",
+      "aliases": [
+        "权力利益矩阵",
+        "干系人地图",
+        "stakeholder map",
+        "谁受影响"
+      ],
+      "oneliner": "按影响与利益分格，定沟通动作",
+      "inject": {
+        "positioning": "按影响力与利益度把相关方放进四象限。",
+        "constraints": [
+          "列出所有能被结果影响的人",
+          "标注各自真实诉求与顾虑",
+          "按影响乘利益定象限",
+          "给每个象限一种沟通动作"
+        ],
+        "skeleton": "影响×利益四格：共建/报备/告知/忽略\n各格：人名＋诉求\n最近一次动作：…",
+        "lengthDiscipline": "每格最多三人，不写人物小传。"
+      },
+      "display": {
+        "what": "以影响力与利益相关度为两轴，把干系人分进四象限，并为不同象限匹配不同的参与深度与沟通频率。",
+        "whenToUse": "推动跨部门变更、上线会影响多方、或方案明明合理却总被某个人挡住时。",
+        "misuse": "只列头衔不列诉求；把'高影响低利益'的人当噪音忽略；分完象限不做任何后续动作。",
+        "source": "Mendelow 权力-利益矩阵（1981）；Freeman 利益相关者理论（1984）。"
+      },
+      "conflicts": [
+        "jtbd"
+      ]
+    },
+    {
+      "id": "jtbd",
+      "zh": "待办任务",
+      "en": "Jobs to Be Done",
+      "category": "understanding",
+      "aliases": [
+        "JTBD",
+        "用户要完成的任务",
+        "jobs to be done",
+        "任务视角"
+      ],
+      "oneliner": "问用户雇它去完成什么任务",
+      "inject": {
+        "positioning": "问用户雇这个产品去完成什么任务。",
+        "constraints": [
+          "用动词写任务，不写功能名",
+          "写出触发场景与发生频率",
+          "列出用户当前的替代做法",
+          "标出最想摆脱的那一步"
+        ],
+        "skeleton": "任务：当我…我想…以便…\n替代做法：…\n痛点步：…\n机会：…",
+        "lengthDiscipline": "只写一个任务，不并列多个场景。"
+      },
+      "display": {
+        "what": "从'用户想完成什么任务'而不是'用户是谁'出发理解需求：功能、情感、社会三层任务，以及用户当前的替代方案。",
+        "whenToUse": "功能做了很多但没人用、或想找新场景而不是给现有功能加按钮时。",
+        "misuse": "把任务写成产品功能（'需要一个导出按钮'）；忽略替代方案（用户可能用 Excel 就够了）；把访谈里的原话直接当任务定义。",
+        "source": "Clayton Christensen 等《Competing Against Luck》（2016）；Tony Ulwick 的 Outcome-Driven Innovation。"
+      },
+      "conflicts": [
+        "stakeholder-map",
+        "user-story-map"
+      ]
+    },
+    {
+      "id": "analogy",
+      "zh": "类比迁移",
+      "en": "Analogical Transfer",
+      "category": "understanding",
+      "aliases": [
+        "同构映射",
+        "跨域类比",
+        "结构映射",
+        "analogy"
+      ],
+      "oneliner": "把陌生问题映射到同构的熟悉问题",
+      "inject": {
+        "positioning": "把陌生问题映射到结构相同的熟悉问题。",
+        "constraints": [
+          "先写清源域与目标域的结构",
+          "只保留同构关系，删装饰细节",
+          "标出映射在哪一层失效",
+          "用目标域语言重述结论"
+        ],
+        "skeleton": "目标：…\n源域：…（同构点：…）\n失效点：…\n结论：…",
+        "lengthDiscipline": "一个类比只推一个结论。"
+      },
+      "display": {
+        "what": "把源领域的因果结构映射到目标领域，用熟悉场景推理陌生场景，同时明确映射的边界。",
+        "whenToUse": "进入陌生领域、需要快速形成假设、或要向非专业听众解释复杂机制时。",
+        "misuse": "被表面相似误导（都叫'平台'就以为商业模式一样）；只讲类比不讲失效点；把类比结论直接当论证。",
+        "source": "Gentner 结构映射理论（1983）；类比推理的认知科学传统。"
+      },
+      "conflicts": [
+        "first-principles"
+      ]
+    },
+    {
+      "id": "steelman",
+      "zh": "钢人化",
+      "en": "Steelmanning",
+      "category": "understanding",
+      "aliases": [
+        "最强论证",
+        "steelman",
+        "先理解再反驳",
+        "善意解读"
+      ],
+      "oneliner": "先造出对方最强版本再判断",
+      "inject": {
+        "positioning": "先构造对方论证的最强版本再作判断。",
+        "constraints": [
+          "重述对方立场到对方认可",
+          "补齐对方最强的证据与前提",
+          "标出该论证最脆的一环",
+          "只反驳那一环，不打稻草人"
+        ],
+        "skeleton": "对方最强版本：…\n其证据/前提：…\n最脆环节：…\n我的判断：…",
+        "lengthDiscipline": "重述不超过三句，不夹带嘲讽。"
+      },
+      "display": {
+        "what": "在反驳之前，先把对方观点补强到连他本人都会说'对，就是这个意思'，再针对最弱环节回应。",
+        "whenToUse": "观点冲突、评审、谈判，或你怀疑自己正在打赢一个假想敌时。",
+        "misuse": "把钢人化做成'我理解你的意思，但是'的客套；补强时偷换成自己好打的版本；补强完不敢反驳。",
+        "source": "steelmanning 概念；Daniel Dennett 引述 Rapoport 规则（《Intuition Pumps》, 2013）。"
+      },
+      "conflicts": [
+        "reductio",
+        "red-team"
+      ]
+    },
+    {
+      "id": "swot",
+      "zh": "SWOT 分析",
+      "en": "SWOT Analysis",
+      "category": "understanding",
+      "aliases": [
+        "态势分析",
+        "四象限盘点",
+        "优劣势分析",
+        "SWOT分析"
+      ],
+      "oneliner": "四格盘点内外，再连成策略",
+      "inject": {
+        "positioning": "把内部强弱与外部机会威胁分四格，再连成动作。",
+        "constraints": [
+          "先分内外，四格不混写",
+          "每条优势配可验证事实",
+          "只写外部变化在机会威胁格",
+          "收尾给两组交叉策略"
+        ],
+        "skeleton": "S/W：…（证据）\nO/T：…（外部）\n交叉：…（两组）",
+        "lengthDiscipline": "四格各不超两条，不解释方法论。"
+      },
+      "display": {
+        "what": "把内部能力（优势、劣势）与外部环境（机会、威胁）分四格列出，再交叉成 SO/ST/WO/WT 四类策略，避免只列清单不出动作。",
+        "whenToUse": "要为一个业务、产品或个人处境做一次全景盘点，且盘点完马上要拿动作的时候。",
+        "misuse": "把外部趋势写进优势格；四格塞满二十条；只做清单不写交叉策略，把 SWOT 当结论而不是起点。",
+        "source": "源自斯坦福研究所 Albert Humphrey 1960 年代的 SOFT 分析，后定型为 SWOT。"
+      },
+      "conflicts": [
+        "pestel",
+        "porter-five-forces"
+      ]
+    },
+    {
+      "id": "pestel",
+      "zh": "PESTEL 宏观环境分析",
+      "en": "PESTEL Analysis",
+      "category": "understanding",
+      "aliases": [
+        "宏观环境分析",
+        "PEST分析",
+        "PESTEL",
+        "六类环境扫描"
+      ],
+      "oneliner": "扫六类宏观变量，只留会动的",
+      "inject": {
+        "positioning": "从六类宏观变量里挑出真正会推动这件事的几条。",
+        "constraints": [
+          "逐类过六个维度，无变化写无",
+          "每条变量注明影响方向与幅度",
+          "只留三条最相关，其余归档",
+          "收尾写一条监测指标"
+        ],
+        "skeleton": "P/E/S/T/E/L 各一句：…\n最相关三条：…（方向与幅度）\n监测指标：…",
+        "lengthDiscipline": "每类只写一句，不展开背景。"
+      },
+      "display": {
+        "what": "按政治、经济、社会、技术、环境、法律六类扫描外部宏观变量，判断哪些变化会真正影响目标，把其余降级为背景。",
+        "whenToUse": "进入新市场、做年度规划、或发现外部好像变了但说不清哪里变的时候。",
+        "misuse": "六类都写满套话；把行业竞争写进 PESTEL（那是五力）；扫完不做取舍，等于没扫。",
+        "source": "Francis Aguilar 1967 年《Scanning the Business Environment》提出的 ETPS 扫描，后扩展为 PEST/PESTEL。"
+      },
+      "conflicts": [
+        "swot"
+      ]
+    },
+    {
+      "id": "porter-five-forces",
+      "zh": "波特五力模型",
+      "en": "Porter's Five Forces",
+      "category": "understanding",
+      "aliases": [
+        "五力模型",
+        "行业结构分析",
+        "five forces",
+        "五力分析"
+      ],
+      "oneliner": "看五种力量，判断行业赚不赚钱",
+      "inject": {
+        "positioning": "用五种结构性力量判断利润会被谁拿走。",
+        "constraints": [
+          "逐力打分并给依据",
+          "只判结构，不列对手名单",
+          "标出最强一力及其压制对象",
+          "收尾给进入或退出建议"
+        ],
+        "skeleton": "进入者：…\n替代品：…\n买方：…\n供方：…\n现有竞争：…\n最强：…→ 建议：…",
+        "lengthDiscipline": "每力一句，不写成行业报告。"
+      },
+      "display": {
+        "what": "从新进入者、替代品、买方议价、供方议价、现有竞争五种结构性力量评估行业吸引力，解释利润为什么被结构性拿走。",
+        "whenToUse": "判断要不要进入某个行业、解释同行普遍不赚钱、或评估一个赛道长期利润空间时。",
+        "misuse": "把五力写成竞品清单；忽略替代品只盯直接对手；五力打分全填中等，等于没判断。",
+        "source": "Michael Porter 1979 年《Harvard Business Review》\"How Competitive Forces Shape Strategy\"。"
+      },
+      "conflicts": [
+        "swot"
+      ]
+    },
+    {
+      "id": "occams-razor",
+      "zh": "奥卡姆剃刀",
+      "en": "Occam's Razor",
+      "category": "understanding",
+      "aliases": [
+        "简约原则",
+        "剃刀原理",
+        "奥卡姆",
+        "如无必要勿增实体"
+      ],
+      "oneliner": "同样能解释，选假设最少那个",
+      "inject": {
+        "positioning": "在都能解释的几种说法里，留假设最少那个。",
+        "constraints": [
+          "先列至少两种竞争解释",
+          "标出每条解释的假设数",
+          "只留假设最少且覆盖全部现象的",
+          "收尾说明删掉的理由"
+        ],
+        "skeleton": "现象：…\nA：…（n 假设）\nB：…（m 假设）\n保留：…",
+        "lengthDiscipline": "不追求最简到失真，够解释即止。"
+      },
+      "display": {
+        "what": "面对多个都能解释同一现象的假设时，优先选择引入额外实体或前提最少的那个，把解释力当约束而不是越复杂越好。",
+        "whenToUse": "归因、排查异常、或在几个都说得通的解释之间做取舍时。",
+        "misuse": "把简单理解成我喜欢；用它否掉确实需要多步机制的解释；只删假设不检查解释力是否还覆盖现象。",
+        "source": "奥卡姆的威廉（14 世纪）如无必要勿增实体；现代科学方法论中的简约性原则。"
+      },
+      "conflicts": [
+        "hanlons-razor",
+        "abductive"
+      ]
+    },
+    {
+      "id": "hanlons-razor",
+      "zh": "汉隆剃刀",
+      "en": "Hanlon's Razor",
+      "category": "understanding",
+      "aliases": [
+        "汉隆原则",
+        "恶意归因",
+        "疏忽优先",
+        "hanlon"
+      ],
+      "oneliner": "能解释为疏忽，就别归为恶意",
+      "inject": {
+        "positioning": "归因他人行为时，先排疏忽与无能，再考虑恶意。",
+        "constraints": [
+          "先列非恶意解释再列恶意解释",
+          "每解释配一个可查的证据",
+          "只在有证据时才归因恶意",
+          "收尾写一句如何核实"
+        ],
+        "skeleton": "行为：…\n非恶意：…（证据）\n恶意：…（证据）\n判断：…｜核实：…",
+        "lengthDiscipline": "只处理这一次归因，不评价人品。"
+      },
+      "display": {
+        "what": "把对方在针对我的默认归因先按住，优先用疏忽、信息差、能力不足解释同一行为，只有证据支持时才升级为恶意。",
+        "whenToUse": "收到冒犯性回复、协作被卡、或自己开始复述他就是想怎样的时候。",
+        "misuse": "用它要求受害者忍让；把结构性问题归为个人疏忽；明明有反复证据还坚持只是疏忽。",
+        "source": "Robert J. Hanlon 的格言，见于 1980 年《Murphy’s Law Book Two》；类似表述可追溯到歌德。"
+      },
+      "conflicts": [
+        "occams-razor",
+        "red-team"
+      ]
+    },
+    {
+      "id": "deductive",
+      "zh": "演绎推理",
+      "en": "Deductive Reasoning",
+      "category": "reasoning",
+      "aliases": [
+        "三段论",
+        "大前提小前提结论",
+        "deduction",
+        "逻辑演绎"
+      ],
+      "oneliner": "前提为真，结论必然成立",
+      "inject": {
+        "positioning": "从确定为真的前提出发推出必然结论。",
+        "constraints": [
+          "先写大前提并验证其真假",
+          "先确认前提覆盖小前提，再推",
+          "只写推得的那一句作结论",
+          "标出前提不成立时结论如何"
+        ],
+        "skeleton": "前提1（真）：…\n前提2（真）：…\n∴ 结论：…\n失效条件：…",
+        "lengthDiscipline": "只推一步，不做连环演绎。"
+      },
+      "display": {
+        "what": "从一般性前提推出个别结论，结论的真值完全依赖前提为真且形式有效。",
+        "whenToUse": "规则明确（法规、接口契约、数学关系）且需要不可反驳的结论时。",
+        "misuse": "大前提本身是未验证的行业说法；小前提偷偷扩大了范围（'所有客户'变成'我见过的客户'）；结论超出前提能承载的强度。",
+        "source": "亚里士多德《前分析篇》三段论；现代形式逻辑教科书。"
+      },
+      "conflicts": [
+        "abductive"
+      ]
+    },
+    {
+      "id": "abductive",
+      "zh": "溯因推理",
+      "en": "Abductive Reasoning",
+      "category": "reasoning",
+      "aliases": [
+        "最佳解释推断",
+        "abduction",
+        "最可能解释",
+        "逆推原因"
+      ],
+      "oneliner": "从现象反推最可能的解释",
+      "inject": {
+        "positioning": "从现象反推最可能的解释并标明不确定。",
+        "constraints": [
+          "列出现象，只写观察所得",
+          "给出两到三个候选解释",
+          "用可检验的预测排序",
+          "写明这是最佳解释而非结论"
+        ],
+        "skeleton": "现象：…\n候选：①…②…\n预测对比：…\n倾向：…（置信：低/中）",
+        "lengthDiscipline": "候选不超过三个，不展开论证。"
+      },
+      "display": {
+        "what": "在信息不完整时，从观察到的现象倒推最能解释它的假设，并用后续证据逐步排除其他候选。",
+        "whenToUse": "诊断故障、解释异常数据、或侦探式定位问题时——你只有现象，没有可用的前提。",
+        "misuse": "只给一个解释就当定论；候选解释之间不可区分（都能解释同一现象）；不做可检验的预测，永远无法收敛。",
+        "source": "Charles S. Peirce 的溯因（abduction）理论；现代诊断推理研究。"
+      },
+      "conflicts": [
+        "deductive",
+        "occams-razor"
+      ]
+    },
+    {
+      "id": "bayesian",
+      "zh": "贝叶斯更新",
+      "en": "Bayesian Updating",
+      "category": "reasoning",
+      "aliases": [
+        "先验后验",
+        "概率更新",
+        "bayes",
+        "证据加权"
+      ],
+      "oneliner": "给先验，按证据强度改概率",
+      "inject": {
+        "positioning": "先给先验，再按证据强度更新概率。",
+        "constraints": [
+          "写出先验概率及其来源",
+          "把证据分成强、弱、无关三档",
+          "给出更新后的区间而非点值",
+          "写下什么证据会推翻判断"
+        ],
+        "skeleton": "先验：P=…（依据…）\n证据：…（强度…）\n后验：…~…\n反证条件：…",
+        "lengthDiscipline": "只更新一次，不连乘多轮。"
+      },
+      "display": {
+        "what": "用先验概率加新证据得到后验概率的推理方式，核心是证据强度决定信念移动多少。",
+        "whenToUse": "判断在信息陆续到来时该改多少；风险估计、医学诊断、增长预测。",
+        "misuse": "先验随便拍一个再假装精确；把弱证据当强证据一次改到底；只更新支持自己的证据（确认偏误）。",
+        "source": "Thomas Bayes（1763），Laplace 系统化；Kahneman《思考，快与慢》对直觉先验的批评。"
+      },
+      "conflicts": [
+        "fermi"
+      ]
+    },
+    {
+      "id": "hypothesis-driven",
+      "zh": "假设驱动",
+      "en": "Hypothesis-Driven Analysis",
+      "category": "reasoning",
+      "aliases": [
+        "先立假设再验证",
+        "hypothesis driven",
+        "假设检验式分析",
+        "收敛验证"
+      ],
+      "oneliner": "立可证伪假设，做最小验证",
+      "inject": {
+        "positioning": "先立一个可被推翻的假设，再设计最小验证。",
+        "constraints": [
+          "假设写成一句可否证的话",
+          "列出验证所需的最少数据",
+          "先写证伪条件，再验证",
+          "按结果决定确认、修正或放弃"
+        ],
+        "skeleton": "假设：…\n证伪条件：…\n最小验证：…\n判定：确认/修正/放弃",
+        "lengthDiscipline": "一次只验一个假设，不并列。"
+      },
+      "display": {
+        "what": "先给出可被数据推翻的判断，再设计成本最低的验证路径，用结果决定收敛方向。",
+        "whenToUse": "时间紧、信息多但结论不清的分析任务；避免'先把所有数据看一遍'的无底洞。",
+        "misuse": "假设写成'我觉得 A 可能有关系'这种无法证伪的话；验证设计成能证明自己对；结果不利就改假设。",
+        "source": "科学方法在咨询业的实操化；麦肯锡假设驱动问题解决法。"
+      },
+      "conflicts": [
+        "issue-tree"
+      ]
+    },
+    {
+      "id": "fermi",
+      "zh": "费米估算",
+      "en": "Fermi Estimation",
+      "category": "reasoning",
+      "aliases": [
+        "数量级估算",
+        "费米问题",
+        "back of envelope",
+        "粗算"
+      ],
+      "oneliner": "拆成可估因子，只求数量级",
+      "inject": {
+        "positioning": "拆成可估算的因子，只求数量级。",
+        "constraints": [
+          "把问题拆成相乘的因子",
+          "每个因子给区间而非单值",
+          "写出算式并标单位",
+          "给量级结论并注明误差范围"
+        ],
+        "skeleton": "目标：…\n= 因子1×因子2×因子3\n= …（量级 10^n）\n误差：×/÷…",
+        "lengthDiscipline": "三个因子封顶，不再细分。"
+      },
+      "display": {
+        "what": "把无法直接测量的问题拆成若干个可粗略估计的因子，相乘得到数量级答案，误差通常在一个数量级内。",
+        "whenToUse": "需要在几分钟内判断'这事是不是差三个数量级'；面试题、市场粗算、容量规划。",
+        "misuse": "因子拆得过多导致误差相乘失控；给一个精确到小数点的假答案；不标单位导致量级错位。",
+        "source": "Enrico Fermi 的经典估算练习；《费米问题》传统。"
+      },
+      "conflicts": [
+        "bayesian"
+      ]
+    },
+    {
+      "id": "counterfactual",
+      "zh": "反事实推演",
+      "en": "Counterfactual Reasoning",
+      "category": "reasoning",
+      "aliases": [
+        "思想实验",
+        "如果会怎样",
+        "counterfactual",
+        "对照反推"
+      ],
+      "oneliner": "改一个条件，看结果是否仍成立",
+      "inject": {
+        "positioning": "改变一个条件，看结果是否仍然成立。",
+        "constraints": [
+          "固定其他条件，一次只改一处",
+          "写出反事实下的预期结果",
+          "对比真实结果，找出差异",
+          "把差异归因到那一个条件"
+        ],
+        "skeleton": "事实：X→Y\n反事实：X′→Y′？\n差异：…\n归因：…",
+        "lengthDiscipline": "一次只改一个变量。"
+      },
+      "display": {
+        "what": "假设某个条件不同，推演结果会怎样，用来识别真正的因果变量而不是伴随现象。",
+        "whenToUse": "归因分析、复盘'这次成功是运气还是能力'、评估某个决策的实际作用。",
+        "misuse": "同时改多个条件无法归因；反事实设得不可能发生；把推演结果当已发生的事实。",
+        "source": "哲学与统计因果推断中的反事实框架（如 Lewis 1973；Rubin 因果模型）。"
+      },
+      "conflicts": [
+        "premortem"
+      ]
+    },
+    {
+      "id": "reductio",
+      "zh": "反证法",
+      "en": "Proof by Contradiction",
+      "category": "reasoning",
+      "aliases": [
+        "归谬",
+        "假设其反",
+        "reductio ad absurdum",
+        "推出矛盾"
+      ],
+      "oneliner": "假设其反，推出矛盾",
+      "inject": {
+        "positioning": "假设命题为假推出矛盾以证明其真。",
+        "constraints": [
+          "先写下被检验的命题",
+          "假设其反面并逐步推导",
+          "只认逻辑或事实矛盾为矛盾",
+          "回扣原命题仍然成立"
+        ],
+        "skeleton": "待证：P\n设 ¬P → … → 矛盾（与…冲突）\n∴ P",
+        "lengthDiscipline": "推导不超过四步。"
+      },
+      "display": {
+        "what": "先假设命题不成立，推导出与已知事实或逻辑规则冲突的结论，从而证明原命题成立。",
+        "whenToUse": "要排除某个方案/解释、或正面证明绕不开时；也用于检查自己的论证有没有隐含矛盾。",
+        "misuse": "把'我想不出更好的解释'当矛盾；推导中偷偷引入新假设；用反证证明一个本来只需举例的命题。",
+        "source": "欧几里得《几何原本》中素数无穷的反证；形式逻辑教科书。"
+      },
+      "conflicts": [
+        "steelman"
+      ]
+    },
+    {
+      "id": "constraint-scan",
+      "zh": "约束扫描",
+      "en": "Constraint Mapping",
+      "category": "reasoning",
+      "aliases": [
+        "约束清单",
+        "硬约束软约束",
+        "可行域收敛",
+        "constraints"
+      ],
+      "oneliner": "先列死硬约束，再在可行域内求解",
+      "inject": {
+        "positioning": "先列死所有硬约束再在可行域内求解。",
+        "constraints": [
+          "把约束分成硬约束与偏好",
+          "每条硬约束标注来源与验证方式",
+          "先找可行解再优化偏好",
+          "标出最可能被放松的那条约束"
+        ],
+        "skeleton": "硬约束：…（来源…）\n偏好：…\n可行域：…\n最优解：…",
+        "lengthDiscipline": "约束不超过七条，不写背景。"
+      },
+      "display": {
+        "what": "把所有限制条件显式列出并按可否违反分类，先把解空间压到可行域，再在域内优化。",
+        "whenToUse": "方案总被现实条件打回、或讨论在'理想方案'上空转时。",
+        "misuse": "把偏好当硬约束，提前砍掉所有好方案；硬约束不写来源，无法验证真假；只找约束不做优化。",
+        "source": "约束理论（Goldratt, 1984）与工程设计约束分析；运筹学可行域概念。"
+      },
+      "conflicts": []
+    },
+    {
+      "id": "toyota-a3",
+      "zh": "丰田 A3",
+      "en": "Toyota A3",
+      "category": "reasoning",
+      "aliases": [
+        "A3报告",
+        "一页纸报告",
+        "A3问题解决",
+        "丰田报告法"
+      ],
+      "oneliner": "一页纸讲清现状、根因、对策",
+      "inject": {
+        "positioning": "把问题压到一页纸，逼出可执行的对策与负责人。",
+        "constraints": [
+          "只写现状与目标差距",
+          "追根因到机制层再停",
+          "对策配负责人与日期",
+          "收尾写一条验证指标"
+        ],
+        "skeleton": "背景/现状/目标：…\n差距：…\n根因：…（追问链）\n对策：…（人/日期）\n验证：…",
+        "lengthDiscipline": "全篇一页，超过就砍背景。"
+      },
+      "display": {
+        "what": "用一张 A3 纸承载问题解决的完整逻辑：背景、现状、目标、根因、对策、验证，篇幅强制压缩到能被人一眼看完。",
+        "whenToUse": "需要向上汇报一个问题并同时拿到决策、或推动跨部门对一个问题形成共识时。",
+        "misuse": "把 A3 写成八页 PPT；根因段直接写沟通不到位；对策没有负责人和日期。",
+        "source": "丰田生产体系中的 A3 报告法，经 John Shook《Managing to Learn》系统化。"
+      },
+      "conflicts": [
+        "eight-d",
+        "five-why"
+      ]
+    },
+    {
+      "id": "eight-d",
+      "zh": "8D 问题解决",
+      "en": "Eight Disciplines",
+      "category": "reasoning",
+      "aliases": [
+        "8D报告",
+        "八步法",
+        "八项纪律",
+        "8D问题解决"
+      ],
+      "oneliner": "八步闭环，从围堵到防再发",
+      "inject": {
+        "positioning": "用八步把异常从围堵、根因做到防再发。",
+        "constraints": [
+          "先围堵，再查根因",
+          "分开写根本原因与流出原因",
+          "每条对策标注验证方式",
+          "收尾写横展与结案条件"
+        ],
+        "skeleton": "D1–2 描述：…\nD3 围堵：…\nD4 根因（发生/流出）：…\nD5–6 对策：…\nD7–8 结案：…",
+        "lengthDiscipline": "八步都写，但每步一句。"
+      },
+      "display": {
+        "what": "一套八步的异常闭环方法，从组建小组、描述问题、临时围堵，到根因分析、对策验证、防再发与结案，保证问题不重复发生。",
+        "whenToUse": "客户投诉、批量不良、产线停线这类需要闭环到防再发的质量异常。",
+        "misuse": "跳过围堵直接查根因，问题继续流出；把流出原因当根本原因；D7 只写加强培训。",
+        "source": "福特汽车 1980 年代提出的团队导向问题解决法（8 Disciplines），后成为汽车行业通用质量工具。"
+      },
+      "conflicts": [
+        "toyota-a3"
+      ]
+    },
+    {
+      "id": "weighted-matrix",
+      "zh": "加权决策矩阵",
+      "en": "Weighted Decision Matrix",
+      "category": "decision",
+      "aliases": [
+        "打分矩阵",
+        "加权评分",
+        "Pugh 矩阵",
+        "决策表"
+      ],
+      "oneliner": "准则权重打分，让选择可复核",
+      "inject": {
+        "positioning": "把准则、权重、打分摆开让选择可复核。",
+        "constraints": [
+          "先定三条以内的评价准则",
+          "归一权重，使总和等于一",
+          "每个方案逐项打分并给理由",
+          "做敏感性检查看是否翻盘"
+        ],
+        "skeleton": "准则｜权重｜A｜B\n…｜…｜…｜…\n合计：…\n翻盘条件：…",
+        "lengthDiscipline": "方案不超过三个，一行一准则。"
+      },
+      "display": {
+        "what": "把评价准则、权重和各方案得分列成表，用加权总分比较方案，并把主观判断暴露在可讨论的位置。",
+        "whenToUse": "多个方案各有优劣、讨论陷入各说各话、或需要向他人解释'为什么选这个'时。",
+        "misuse": "权重事后调整到让偏好方案胜出；准则之间高度相关导致重复计分；只给总分不给理由。",
+        "source": "Kepner-Tregoe 决策分析（1965）；Stuart Pugh 的 Pugh 矩阵（1980s）。"
+      },
+      "conflicts": [
+        "expected-value",
+        "reversibility"
+      ]
+    },
+    {
+      "id": "eisenhower",
+      "zh": "艾森豪威尔矩阵",
+      "en": "Eisenhower Matrix",
+      "category": "decision",
+      "aliases": [
+        "四象限",
+        "重要紧急",
+        "时间管理矩阵",
+        "Eisenhower"
+      ],
+      "oneliner": "按重要紧急四格定做排委删",
+      "inject": {
+        "positioning": "按重要与紧急两轴决定做、排、委派、删。",
+        "constraints": [
+          "先定义什么叫重要",
+          "把待办逐条放进四格",
+          "每格给出对应处理动作",
+          "统计紧急不重要占了多少"
+        ],
+        "skeleton": "重要紧急→立刻做：…\n重要不紧急→排期：…\n紧急不重要→委派：…\n都不→删：…",
+        "lengthDiscipline": "每格不超过三项。"
+      },
+      "display": {
+        "what": "用重要性和紧急性两个维度把任务分成四类，分别对应立刻做、安排做、委派、删除四种处理。",
+        "whenToUse": "待办堆积、时间被切碎、或需要判断'这件事到底该不该我做'时。",
+        "misuse": "重要没有定义，等于凭手感；把所有事都标紧急；只分类不删，第四格永远清不掉。",
+        "source": "通说归于艾森豪威尔；普及于 Stephen Covey《高效能人士的七个习惯》（1989）。"
+      },
+      "conflicts": [
+        "rice"
+      ]
+    },
+    {
+      "id": "rice",
+      "zh": "RICE 优先级",
+      "en": "RICE Prioritization",
+      "category": "decision",
+      "aliases": [
+        "RICE 打分",
+        "影响触达信心成本",
+        "需求排序",
+        "RICE"
+      ],
+      "oneliner": "触达影响信心除以成本排序",
+      "inject": {
+        "positioning": "用触达乘影响乘信心除以成本给需求排序。",
+        "constraints": [
+          "每个因子给一到五分并写依据",
+          "把触达写成具体人数或占比",
+          "在信心低于一半时注明缺什么证据",
+          "算分后按分数排序不微调"
+        ],
+        "skeleton": "需求｜触达｜影响｜信心｜成本｜RICE\n…\n排序：…",
+        "lengthDiscipline": "只排一次，不改分数迁就结论。"
+      },
+      "display": {
+        "what": "Reach × Impact × Confidence ÷ Effort：把需求价值拆成四个可讨论的因子，用乘积除以成本得到排序分。",
+        "whenToUse": "需求池排序、路线图取舍，尤其是争论'这个功能重要还是那个重要'时。",
+        "misuse": "影响用 1-5 分但没人知道 3 分意味着什么；信心分靠拍脑袋；算完后因为不喜欢结果改分。",
+        "source": "Intercom 产品团队（Sean McBride, 2016）提出的需求排序法。"
+      },
+      "conflicts": [
+        "eisenhower",
+        "cost-benefit",
+        "aarrr"
+      ]
+    },
+    {
+      "id": "cost-benefit",
+      "zh": "成本收益分析",
+      "en": "Cost-Benefit Analysis",
+      "category": "decision",
+      "aliases": [
+        "ROI 测算",
+        "机会成本",
+        "投入产出",
+        "cost benefit"
+      ],
+      "oneliner": "投入收益机会成本摆一张账",
+      "inject": {
+        "positioning": "把投入、收益、机会成本摆在同一张账上。",
+        "constraints": [
+          "列全成本，含时间与维护",
+          "收益给区间并标明假设",
+          "写出被放弃的最优替代",
+          "给出回本周期或盈亏平衡点"
+        ],
+        "skeleton": "成本：…（一次性/持续）\n收益：…（假设…）\n机会成本：…\n回本：…个月",
+        "lengthDiscipline": "只算一层，不做十年预测。"
+      },
+      "display": {
+        "what": "把一项选择的全部成本、预期收益和放弃其他选项的代价放在同一口径下比较。",
+        "whenToUse": "要不要做、买不买、自建还是外采，且金额或人力投入不可忽略时。",
+        "misuse": "只算一次性投入不算维护成本；收益用最乐观值；把机会成本写成零。",
+        "source": "经济学成本收益分析传统；机会成本概念见 Friedrich von Wieser。"
+      },
+      "conflicts": [
+        "rice"
+      ]
+    },
+    {
+      "id": "premortem",
+      "zh": "事前验尸",
+      "en": "Premortem",
+      "category": "decision",
+      "aliases": [
+        "预演失败",
+        "失败原因清单",
+        "premortem",
+        "反向规划"
+      ],
+      "oneliner": "假设已经失败，倒推原因与信号",
+      "inject": {
+        "positioning": "假设项目已经失败，倒推原因与早期信号。",
+        "constraints": [
+          "先写它已经失败了一句定调",
+          "列五条失败原因，越具体越好",
+          "每条给一个可观测的早期信号",
+          "给两条加预防动作与负责人"
+        ],
+        "skeleton": "设定：项目已失败\n①原因→信号→预防\n②…\n必守：…",
+        "lengthDiscipline": "原因不超过五条，不写安慰话。"
+      },
+      "display": {
+        "what": "在行动前先假设目标已经失败，让团队具体说出失败的原因，从而提前布防，比事后复盘便宜得多。",
+        "whenToUse": "项目启动、重大上线、承诺截止日期之前；团队过于乐观时。",
+        "misuse": "写成风险登记册的套话；原因停留在'沟通不足'；列了风险却没有对应的可观测信号。",
+        "source": "Gary Klein, Performing a Project Premortem, Harvard Business Review（2007）。"
+      },
+      "conflicts": [
+        "counterfactual",
+        "reverse-brainstorm"
+      ]
+    },
+    {
+      "id": "second-order",
+      "zh": "二阶后果",
+      "en": "Second-Order Thinking",
+      "category": "decision",
+      "aliases": [
+        "然后呢",
+        "连锁反应",
+        "二阶思维",
+        "and then what"
+      ],
+      "oneliner": "连问三层然后呢，看连锁后果",
+      "inject": {
+        "positioning": "问三层然后呢，看决策的连锁后果。",
+        "constraints": [
+          "写出一阶直接后果",
+          "追问两次「然后呢」并作答",
+          "标出哪一环出现反噬",
+          "给出减弱反噬的一个动作"
+        ],
+        "skeleton": "决策：…\n一阶：…\n二阶：…\n三阶：…（反噬点）\n对策：…",
+        "lengthDiscipline": "推到三阶即停，不无限外推。"
+      },
+      "display": {
+        "what": "不停在直接后果，继续追问'然后呢'，把由他人反应、激励变化、资源挤占产生的间接后果也摆上桌。",
+        "whenToUse": "政策、激励、定价、组织调整这类会改变他人行为的决策。",
+        "misuse": "停在二阶就开始写小说；把想象当必然；因为担心反噬而不敢做一阶正确的事。",
+        "source": "Frédéric Bastiat《看得见的与看不见的》（1850）；Howard Marks 的二阶思维表述。"
+      },
+      "conflicts": []
+    },
+    {
+      "id": "reversibility",
+      "zh": "可逆性判断",
+      "en": "Reversibility Test",
+      "category": "decision",
+      "aliases": [
+        "单向门双向门",
+        "可逆决策",
+        "type 1 type 2",
+        "试错成本"
+      ],
+      "oneliner": "先判能不能退，再定想多深",
+      "inject": {
+        "positioning": "先判这一步可不可退再决定思考深度。",
+        "constraints": [
+          "判定是单向门还是双向门",
+          "写出回退成本与时间",
+          "先判可逆，再给最小试验方案",
+          "不可逆则要求更多证据再动"
+        ],
+        "skeleton": "性质：单向门/双向门\n回退成本：…\n动作：小步试/缓一步\n验证点：…",
+        "lengthDiscipline": "判断只写一段，不重复论证。"
+      },
+      "display": {
+        "what": "先判断决策能否低成本撤回：可逆决策快做快改，不可逆决策才值得投入大量分析。",
+        "whenToUse": "决策速度与决策质量冲突时；团队对一个可逆的小决定开了三次会时。",
+        "misuse": "把所有决定都当单向门，流程拖死；把不可逆决定（数据删除、公开承诺）当小试验。",
+        "source": "Jeff Bezos 2015 年致股东信中的 Type 1 / Type 2 决策。"
+      },
+      "conflicts": [
+        "weighted-matrix"
+      ]
+    },
+    {
+      "id": "expected-value",
+      "zh": "期望值决策",
+      "en": "Expected Value",
+      "category": "decision",
+      "aliases": [
+        "概率加权",
+        "期望效用",
+        "EV 计算",
+        "赌注大小"
+      ],
+      "oneliner": "概率乘后果，比较不同选择",
+      "inject": {
+        "positioning": "把概率乘后果再比较不同选择的期望。",
+        "constraints": [
+          "列出结果分支与概率区间",
+          "标注概率来源是历史还是主观",
+          "算出期望并注明方差大小",
+          "判断能否承受最坏分支"
+        ],
+        "skeleton": "分支｜概率｜结果｜概率×结果\n…\n期望：…｜最坏：…（可承受？）",
+        "lengthDiscipline": "分支不超过四个，不画完整决策树。"
+      },
+      "display": {
+        "what": "把每个选项的可能结果按概率加权求平均，再结合方差和最坏情况判断是否值得下注。",
+        "whenToUse": "结果不确定但可以给出概率范围时：投放、招聘、技术选型、试点。",
+        "misuse": "用期望值掩盖破产风险；概率凭感觉且不给区间；忽略一次失败就出局的情形。",
+        "source": "Pascal 与 Fermat 的期望值概念（17 世纪）；Bernoulli 期望效用（1738）。"
+      },
+      "conflicts": [
+        "weighted-matrix",
+        "minimax-regret"
+      ]
+    },
+    {
+      "id": "minimax-regret",
+      "zh": "最小最大后悔",
+      "en": "Minimax Regret",
+      "category": "decision",
+      "aliases": [
+        "后悔值",
+        "minimax regret",
+        "最坏情况比较",
+        "遗憾最小"
+      ],
+      "oneliner": "取最坏后悔值最小的方案",
+      "inject": {
+        "positioning": "先算每个选择的最坏后悔值再取最小。",
+        "constraints": [
+          "列出可选方案与可能情形",
+          "先找出每种情形下的最优结果",
+          "算每个方案相对最优的后悔值",
+          "取最大后悔值最小的方案"
+        ],
+        "skeleton": "情形｜最优｜方案A后悔｜方案B后悔\n…\n最大后悔：A=… B=…\n选：…",
+        "lengthDiscipline": "只比两三个方案，不穷举。"
+      },
+      "display": {
+        "what": "不追求期望最优，而是让'事后最难受的那个差距'尽可能小，适合无法承受重大错失的场景。",
+        "whenToUse": "一次性、不可重来、且错失代价远大于多花成本的决策。",
+        "misuse": "情形表漏掉真正会发生的极端情况；用它替代所有决策导致过度保守；后悔值口径不一致。",
+        "source": "L. J. Savage 的 minimax regret 准则（1951）。"
+      },
+      "conflicts": [
+        "expected-value"
+      ]
+    },
+    {
+      "id": "pareto",
+      "zh": "帕累托 80/20",
+      "en": "Pareto Principle",
+      "category": "decision",
+      "aliases": [
+        "二八法则",
+        "关键少数",
+        "80/20",
+        "帕累托"
+      ],
+      "oneliner": "找出贡献八成的关键少数",
+      "inject": {
+        "positioning": "先找出贡献八成的关键少数再分配力气。",
+        "constraints": [
+          "按贡献排序并累计占比",
+          "标出累计到八成的分界点",
+          "说明剩下两成为何先不做",
+          "给出下一步只做的一件"
+        ],
+        "skeleton": "排序：①…②…③…\n累计 80% 分界：…\n先不做：…\n下一步：…",
+        "lengthDiscipline": "只列前五项，不做完整长尾分析。"
+      },
+      "display": {
+        "what": "投入与产出往往不成比例：少数原因带来多数结果。先定位这少数，再把资源集中过去。",
+        "whenToUse": "资源有限、长尾很长、或需要快速找到杠杆点时。",
+        "misuse": "把 80/20 当定律套在一切分布上；找到头部后仍然平均用力；忽视长尾中可能藏着下一个头部。",
+        "source": "Vilfredo Pareto 的收入分布观察；Joseph Juran 命名为 80/20 法则。"
+      },
+      "conflicts": []
+    },
+    {
+      "id": "smart",
+      "zh": "SMART 目标",
+      "en": "SMART Goals",
+      "category": "decision",
+      "aliases": [
+        "SMART原则",
+        "目标设定",
+        "可衡量目标",
+        "SMART目标"
+      ],
+      "oneliner": "目标要具体、可测、有期限",
+      "inject": {
+        "positioning": "把一句愿望改写成可验收、带期限的目标。",
+        "constraints": [
+          "先写出原始愿望原话",
+          "给每个字母填一个具体值",
+          "只留一个可测的完成标准",
+          "收尾写截止日期与验收人"
+        ],
+        "skeleton": "原话：…\nS 具体：…\nM 度量：…（口径）\nA 可达：…\nR 相关：…\nT 期限：…",
+        "lengthDiscipline": "目标只写一条，不列任务清单。"
+      },
+      "display": {
+        "what": "把模糊愿望拆成具体、可度量、可达成、相关且有期限的一条目标，让做到了没有有唯一判定口径。",
+        "whenToUse": "对方说要提升、要做好却说不清做到什么程度时；或交接任务需要验收标准时。",
+        "misuse": "五个字母都填形容词（更好地、显著提升）；把手段写进目标；一条目标塞三个成果。",
+        "source": "George T. Doran 1981 年《Management Review》\"There’s a S.M.A.R.T. way to write management’s goals\"。"
+      },
+      "conflicts": [
+        "grow"
+      ]
+    },
+    {
+      "id": "grow",
+      "zh": "GROW 教练对话",
+      "en": "GROW Model",
+      "category": "decision",
+      "aliases": [
+        "GROW模型",
+        "教练对话",
+        "目标对话",
+        "四步教练"
+      ],
+      "oneliner": "目标现状选项行动，四步推进",
+      "inject": {
+        "positioning": "用四步对话让对方自己说出目标、现状、选项和行动。",
+        "constraints": [
+          "先问目标，不给建议",
+          "只问事实与已试过的动作",
+          "选项至少三个再评价",
+          "收尾让对方定行动与时间"
+        ],
+        "skeleton": "G 目标：…\nR 现状：…\nO 选项：①②③\nW 行动：…（谁/何时/怎么验证）",
+        "lengthDiscipline": "一次只走一轮，不替他决定。"
+      },
+      "display": {
+        "what": "用目标、现状、选项、行动四步提问，把我该怎么办的球留在对方手上，让他自己产出并承诺下一步。",
+        "whenToUse": "对方来求助但答案其实在他手里；或辅导下属、复盘一次受挫时。",
+        "misuse": "四步走成审讯；在选项阶段替他挑；W 阶段只得到一句我尽量。",
+        "source": "John Whitmore 1992 年《Coaching for Performance》系统化的 GROW 模型。"
+      },
+      "conflicts": [
+        "smart",
+        "socratic"
+      ]
+    },
+    {
+      "id": "pdca",
+      "zh": "PDCA 循环",
+      "en": "PDCA Cycle",
+      "category": "decision",
+      "aliases": [
+        "戴明环",
+        "PDCA循环",
+        "计划执行检查",
+        "持续改进循环"
+      ],
+      "oneliner": "计划执行检查再处理，转一圈",
+      "inject": {
+        "positioning": "把一次改进放进计划、执行、检查、处理的闭环。",
+        "constraints": [
+          "先写验证指标",
+          "只改一个变量再执行",
+          "检查阶段对比预期与实际",
+          "收尾决定固化还是重来"
+        ],
+        "skeleton": "P：…（指标）\nD：…（时间盒）\nC：…（预期 vs 实际）\nA：…（固化/重来）",
+        "lengthDiscipline": "一轮只改一处，跑完再进下一轮。"
+      },
+      "display": {
+        "what": "把改进拆成计划、执行、检查、处理四段闭环，每轮只验证一个假设，用检查结果决定固化标准还是重来。",
+        "whenToUse": "已有流程要持续改进、或想在真实环境里小步验证一个改动时。",
+        "misuse": "只有 P 和 D 没有 C 和 A；一轮改五个变量；检查阶段用感觉代替指标。",
+        "source": "Walter Shewhart 1930 年代的 Spec-Do-Check-Act，经 W. Edwards Deming 推广为 PDCA。"
+      },
+      "conflicts": [
+        "design-thinking"
+      ]
+    },
+    {
+      "id": "scamper",
+      "zh": "SCAMPER 七问",
+      "en": "SCAMPER",
+      "category": "innovation",
+      "aliases": [
+        "七问法",
+        "替代组合调整",
+        "SCAMPER",
+        "奔驰法"
+      ],
+      "oneliner": "七个改造动作逼出新选项",
+      "inject": {
+        "positioning": "用替代、组合、调整等七问逼出新选项。",
+        "constraints": [
+          "每问至少产出一个具体改法",
+          "把改法落到可做的动作",
+          "先只发散不评价",
+          "给前两个改法做可行性判断"
+        ],
+        "skeleton": "S 替代：…\nC 组合：…\nA 调整：…（其余类推）\n入选：…",
+        "lengthDiscipline": "每问一行，每行不超过两项。"
+      },
+      "display": {
+        "what": "Substitute、Combine、Adapt、Modify、Put to other uses、Eliminate、Reverse 七个改造动作，对现有对象逐问改造。",
+        "whenToUse": "已有产品或流程，需要在不发明新东西的前提下找出改进选项。",
+        "misuse": "七问变成七个空泛形容词；发散阶段就开始说'这个做不了'；产出清单没有一项落到可执行动作。",
+        "source": "Bob Eberle, SCAMPER: Games for Imagination Development（1971）。"
+      },
+      "conflicts": [
+        "triz",
+        "morphological"
+      ]
+    },
+    {
+      "id": "six-hats",
+      "zh": "六顶思考帽",
+      "en": "Six Thinking Hats",
+      "category": "innovation",
+      "aliases": [
+        "六帽法",
+        "平行思维",
+        "de Bono 六帽",
+        "分角色思考"
+      ],
+      "oneliner": "分角色并行思考，情绪与事实分开",
+      "inject": {
+        "positioning": "分角色并行思考，把情绪与事实分开。",
+        "constraints": [
+          "按白红黄黑绿蓝顺序逐轮发言",
+          "每顶帽子只允许一种语气",
+          "只列风险，不给方案",
+          "收口时给出下一步"
+        ],
+        "skeleton": "白（事实）…／红（直觉）…\n黄（价值）…／黑（风险）…\n绿（新解）…\n蓝（结论）…",
+        "lengthDiscipline": "每帽一句，不转述他人。"
+      },
+      "display": {
+        "what": "用六种颜色的帽子代表六种思考模式，要求所有人在同一时刻只用一种模式，避免事实与情绪互相打断。",
+        "whenToUse": "会议里有人一开口就否定、或需要同时评估价值与风险时。",
+        "misuse": "把帽子当成人设分配（你是黑帽）；黄帽阶段还在挑毛病；蓝帽不收口，讨论散场。",
+        "source": "Edward de Bono, Six Thinking Hats（1985）。"
+      },
+      "conflicts": [
+        "design-thinking"
+      ]
+    },
+    {
+      "id": "design-thinking",
+      "zh": "设计思维双钻",
+      "en": "Design Thinking / Double Diamond",
+      "category": "innovation",
+      "aliases": [
+        "双钻模型",
+        "发散收敛",
+        "design thinking",
+        "共情定义原型"
+      ],
+      "oneliner": "先共情定义，再发散收敛",
+      "inject": {
+        "positioning": "先共情定义问题，再发散收敛出可试方案。",
+        "constraints": [
+          "在共情阶段只记录用户原话",
+          "把问题重写成一句 HMW",
+          "列至少十个选项，发散不评判",
+          "用一个标准筛到两个"
+        ],
+        "skeleton": "观察：…（原话）\nHMW：我们如何…？\n选项：1)…10)\n入选：…→原型验证",
+        "lengthDiscipline": "两轮封顶，不无限发散。"
+      },
+      "display": {
+        "what": "先发散再收敛的两段菱形：第一颗钻把问题空间打开并重新定义，第二颗钻把解法空间打开再收敛到可验证原型。",
+        "whenToUse": "需求模糊、用户说不清要什么、或团队直接跳到方案时。",
+        "misuse": "跳过共情直接画原型；HMW 写成宽泛的'如何做得更好'；发散阶段就筛掉'不现实'的点子。",
+        "source": "IDEO 与 Stanford d.school 的设计思维；英国设计委员会双钻模型（2004）。"
+      },
+      "conflicts": [
+        "six-hats",
+        "pdca",
+        "design-sprint"
+      ]
+    },
+    {
+      "id": "morphological",
+      "zh": "形态分析",
+      "en": "Morphological Analysis",
+      "category": "innovation",
+      "aliases": [
+        "形态矩阵",
+        "维度选项组合",
+        "Zwicky",
+        "组合创新"
+      ],
+      "oneliner": "列维度与选项，交叉找空白格",
+      "inject": {
+        "positioning": "列出维度与选项，交叉组合找空白格。",
+        "constraints": [
+          "定三个维度，每维三到五个选项",
+          "画出组合矩阵",
+          "标出已被占用的格子",
+          "从空格挑三个可行组合"
+        ],
+        "skeleton": "维度A：a1 a2 a3\n维度B：b1 b2\n矩阵：…（占用/空白）\n候选：…",
+        "lengthDiscipline": "维度不超过四个，不逐一评价。"
+      },
+      "display": {
+        "what": "把问题拆成若干独立维度，每个维度列出可选值，再系统组合所有格点，从没人占用的空格里找创新点。",
+        "whenToUse": "要系统性穷举组合、或怀疑现有产品只覆盖了少数组合时。",
+        "misuse": "维度不独立导致组合重复；组合爆炸后不筛选；只填已被市场验证的格子，等于抄现有产品。",
+        "source": "Fritz Zwicky 的形态分析法（1940s–1960s），用于天体物理与工程。"
+      },
+      "conflicts": [
+        "scamper",
+        "mandala-9"
+      ]
+    },
+    {
+      "id": "triz",
+      "zh": "TRIZ 矛盾矩阵",
+      "en": "TRIZ",
+      "category": "innovation",
+      "aliases": [
+        "发明原理",
+        "矛盾矩阵",
+        "技术矛盾",
+        "TRIZ"
+      ],
+      "oneliner": "把问题抽象成矛盾，再查发明原理",
+      "inject": {
+        "positioning": "把问题抽象成技术矛盾再查发明原理。",
+        "constraints": [
+          "写清改善的参数与被牺牲的参数",
+          "从矛盾矩阵取两到三条原理",
+          "每条原理给一个本领域改法",
+          "标出改法引入的新矛盾"
+        ],
+        "skeleton": "要改善：…｜被牺牲：…\n原理：①…②…\n落地方案：…\n新矛盾：…",
+        "lengthDiscipline": "原理不超过三条，不背全书。"
+      },
+      "display": {
+        "what": "把具体难题抽象成'改善 A 必然恶化 B'的技术矛盾，再用四十条发明原理寻找化解矛盾的方向。",
+        "whenToUse": "工程设计中遇到明确trade-off（更轻 vs 更强、更快 vs 更省），且常规优化已到极限时。",
+        "misuse": "把管理问题硬套技术矛盾；列一堆原理不落到本领域；忽略新方案引入的新矛盾。",
+        "source": "Genrich Altshuller 自 1946 年起发展的 TRIZ；四十条发明原理。"
+      },
+      "conflicts": [
+        "scamper"
+      ]
+    },
+    {
+      "id": "assumption-busting",
+      "zh": "假设破除",
+      "en": "Assumption Busting",
+      "category": "innovation",
+      "aliases": [
+        "拆隐含假设",
+        "假设清单",
+        "assumption busting",
+        "破前提"
+      ],
+      "oneliner": "摊开隐含假设，逐条删掉看还剩什么",
+      "inject": {
+        "positioning": "把隐含前提摊开，逐条删掉看还剩什么。",
+        "constraints": [
+          "列出五条隐含假设",
+          "标出哪条其实只是惯例",
+          "逐条删掉并推演后果",
+          "先保留可行的一条作为新起点"
+        ],
+        "skeleton": "假设：①…②…③…\n可删：…\n删除后：…\n新起点：…",
+        "lengthDiscipline": "假设不超过五条，一条一行。"
+      },
+      "display": {
+        "what": "把方案默认成立的前提逐条写出来，区分物理必然与行业惯例，删掉后者看方案还能怎么长。",
+        "whenToUse": "所有方案长得都差不多、或有人说'这行只能这样'时；也是第一性原理的轻量入口。",
+        "misuse": "只列容易删的假设；删完不做推演直接喊口号；把商业惯例当物理定律。",
+        "source": "创新技法 assumption busting（Arthur VanGundy 等）；与第一性原理同源。"
+      },
+      "conflicts": [
+        "first-principles"
+      ]
+    },
+    {
+      "id": "reverse-brainstorm",
+      "zh": "反向头脑风暴",
+      "en": "Reverse Brainstorming",
+      "category": "innovation",
+      "aliases": [
+        "最差点子",
+        "反向激荡",
+        "反向脑暴",
+        "先想最糟"
+      ],
+      "oneliner": "先想怎样做砸，再反转成应做之事",
+      "inject": {
+        "positioning": "先想怎样把事做砸再反向取用。",
+        "constraints": [
+          "列出十种搞砸的做法",
+          "不许中途反驳或修正",
+          "把每条反转成应做之事",
+          "把三条落成检查项"
+        ],
+        "skeleton": "搞砸清单：1)…10)\n反转：→ 应做…\n检查项：…",
+        "lengthDiscipline": "清单十条封顶，每条一句。"
+      },
+      "display": {
+        "what": "把'如何改进'换成'如何搞砸'，负向提问往往更容易产生具体想法，再把清单反转成行动。",
+        "whenToUse": "团队对正面提问已经疲劳、或改进点太抽象时。",
+        "misuse": "变成吐槽大会；反转时机械取反产生废话；只列不选，最后没有检查项。",
+        "source": "创新技法 reverse brainstorming，见 VanGundy《Techniques of Structured Problem Solving》（1988）。"
+      },
+      "conflicts": [
+        "premortem"
+      ]
+    },
+    {
+      "id": "mandala-9",
+      "zh": "曼陀罗九宫格",
+      "en": "Mandala Chart",
+      "category": "innovation",
+      "aliases": [
+        "九宫格",
+        "曼陀罗思考法",
+        "mandala",
+        "九宫格发散"
+      ],
+      "oneliner": "中心一个题，八个方向各展八格",
+      "inject": {
+        "positioning": "以一个主题为中心，八个方向各再展开八格，逼出完整覆盖面。",
+        "constraints": [
+          "先定中心主题再填八个方向",
+          "让八个方向互不重叠",
+          "每个方向再展开八格",
+          "收尾圈出三个可执行项"
+        ],
+        "skeleton": "中心：…\n八向：①②③④⑤⑥⑦⑧\n展开：…（每向八格）\n选出：…（三项）",
+        "lengthDiscipline": "格子填词不写句子，填满再筛。"
+      },
+      "display": {
+        "what": "把中心主题放在九宫格中央，外围八格是八个方向，每个方向再向外扩成一个小九宫格，用固定格数强制把覆盖面想全。",
+        "whenToUse": "头脑风暴卡住、需要穷举一个主题的周边、或做个人与项目的年度规划时。",
+        "misuse": "八个方向写成同义词；格子里写长句；填满就交，不做筛选。",
+        "source": "日本今泉浩晃提出的曼陀罗思考法（Mandal-Art），常用于目标拆解与创意发散。"
+      },
+      "conflicts": [
+        "morphological"
+      ]
+    },
+    {
+      "id": "design-sprint",
+      "zh": "设计冲刺",
+      "en": "Design Sprint",
+      "category": "innovation",
+      "aliases": [
+        "Design Sprint",
+        "冲刺工作坊",
+        "五天冲刺",
+        "sprint周"
+      ],
+      "oneliner": "五天从问题到可测原型",
+      "inject": {
+        "positioning": "用五天把一个问题推到可被用户测试的原型。",
+        "constraints": [
+          "先定一个可答的问题与用户",
+          "按天排：地图、发散、决策、原型、测试",
+          "只做够测的假界面",
+          "收尾给测试结论与下一步"
+        ],
+        "skeleton": "D1 地图→D2 发散→D3 决策→D4 原型→D5 测试\n问题：…｜用户：…\n结论：…",
+        "lengthDiscipline": "五天不延长，测试固定五人。"
+      },
+      "display": {
+        "what": "用五天固定节奏（理解与地图、发散、决策、原型、用户测试）把一个模糊问题压缩成一次可验证的原型实验。",
+        "whenToUse": "有明确产品或流程问题、需要在一周内拿到用户证据、且能凑齐决策人时。",
+        "misuse": "五天全用来讨论；原型做成能上线的产品；测试只找同事；结论写成用户很喜欢。",
+        "source": "Jake Knapp 在 Google Ventures 发展的 Design Sprint，见《Sprint》(2016)。"
+      },
+      "conflicts": [
+        "design-thinking"
+      ]
+    },
+    {
+      "id": "user-story-map",
+      "zh": "用户故事地图",
+      "en": "User Story Mapping",
+      "category": "innovation",
+      "aliases": [
+        "故事地图",
+        "用户旅程排序",
+        "story map",
+        "发布切片"
+      ],
+      "oneliner": "横按旅程竖按优先级，切出发布",
+      "inject": {
+        "positioning": "横排用户旅程，纵排必要性，切出发布线。",
+        "constraints": [
+          "先写旅程骨干步骤",
+          "每步下列用户任务不是功能",
+          "按必要性分层排纵轴",
+          "收尾切一条最小发布横线"
+        ],
+        "skeleton": "旅程：①②③…\n任务：…（每步之下）\n分层：必须/应该/可以\n发布线：…",
+        "lengthDiscipline": "先铺全再切，不在单点讨论。"
+      },
+      "display": {
+        "what": "把用户完成目标的活动按时间顺序横着铺开，再把每个活动下的任务按必要性纵向分层，用一条横线切出第一个可发布的版本。",
+        "whenToUse": "需求列表越堆越长、要决定第一版做到哪、或团队对用户路径没有共识时。",
+        "misuse": "横轴写成功能模块；纵轴按开发工作量分层；一次切出三个版本。",
+        "source": "Jeff Patton《User Story Mapping》(2014) 提出的故事地图实践。"
+      },
+      "conflicts": [
+        "jtbd"
+      ]
+    },
+    {
+      "id": "socratic",
+      "zh": "苏格拉底提问",
+      "en": "Socratic Questioning",
+      "category": "interaction",
+      "aliases": [
+        "追问式提问",
+        "产婆术",
+        "socratic",
+        "反问澄清"
+      ],
+      "oneliner": "连续追问，检验论证的前提",
+      "inject": {
+        "positioning": "用连续追问检验对方论证的前提。",
+        "constraints": [
+          "每轮只问一个问题",
+          "追问前提而非细节",
+          "先引对方原话再问",
+          "不替对方下结论"
+        ],
+        "skeleton": "你刚才说…（原话）\n→ 若…成立，那…？\n→ 这个前提来自哪里？",
+        "lengthDiscipline": "连续不超过五问，问完停手。"
+      },
+      "display": {
+        "what": "通过连续提问让对方自己发现论证中的隐含前提与矛盾，而不是直接给出正确答案。",
+        "whenToUse": "对方观点自信但依据薄弱、或你想让他自己得出结论而不是被说服时。",
+        "misuse": "把追问变成审讯；问题里预设了答案；问了五轮不给落脚点，对方只觉得被绕。",
+        "source": "柏拉图早期对话录中的苏格拉底方法（《美诺篇》《理想国》）。"
+      },
+      "conflicts": [
+        "one-question",
+        "elenchus",
+        "grow"
+      ]
+    },
+    {
+      "id": "elenchus",
+      "zh": "苏格拉底反诘法",
+      "en": "Socratic Elenchus",
+      "category": "interaction",
+      "aliases": [
+        "反诘法",
+        "苏格拉底反诘",
+        "诘问法",
+        "拆前提反问",
+        "elenchus"
+      ],
+      "oneliner": "用他的答案推出矛盾，再拆前提",
+      "inject": {
+        "positioning": "从对方的回答里逼出自相矛盾，让他自己放弃那个前提。",
+        "constraints": [
+          "先接受对方结论，再往下推",
+          "用他的原话复述关键一步",
+          "不趁势追加新战场",
+          "拆一个前提就收"
+        ],
+        "skeleton": "你主张…（原话）\n→ 若成立，则可推出…\n→ 但你也说过…\n→ 两者只能留一个，你留哪个？",
+        "lengthDiscipline": "一次只推一个矛盾，拆完即收。"
+      },
+      "display": {
+        "what": "不另立观点，而是顺着对方的答案推下去，推出与他自己另一句话的冲突，让他自己撤掉那个前提。",
+        "whenToUse": "对方立场坚定但理由自相缠绕、你想让他当场修正而不是被你说服时。",
+        "misuse": "抓口误当矛盾；一次开三个战场；把反诘当成赢辩论，对方只会加固防御。",
+        "source": "柏拉图早期对话录（《欧绪弗洛篇》《高尔吉亚篇》）中的 elenchus。"
+      },
+      "conflicts": [
+        "socratic"
+      ]
+    },
+    {
+      "id": "feynman",
+      "zh": "费曼学习法",
+      "en": "Feynman Technique",
+      "category": "interaction",
+      "aliases": [
+        "讲给外行",
+        "费曼技巧",
+        "白纸复述",
+        "feynman"
+      ],
+      "oneliner": "用外行话讲一遍，卡住处即漏洞",
+      "inject": {
+        "positioning": "用外行能懂的话讲一遍，卡住处即漏洞。",
+        "constraints": [
+          "不用术语，必须用日常词",
+          "先给一句大白话总述",
+          "标出讲不顺的那一处",
+          "先补那处最小知识，再重讲"
+        ],
+        "skeleton": "一句话版本：…\n展开：①…②…\n卡点：…\n补课后再讲：…",
+        "lengthDiscipline": "全篇不超过三段，不堆定义。"
+      },
+      "display": {
+        "what": "假装要讲给完全不懂的人听，用最朴素的词复述概念；一旦卡住或必须借术语，那里就是没真懂的地方。",
+        "whenToUse": "自检是否真懂、给非专业听众解释、准备教学或答辩时。",
+        "misuse": "用更复杂的类比替换术语；讲得顺就以为懂了，不回头补卡点；把复述做成背诵。",
+        "source": "费曼的教学实践与'费曼技巧'通行说法；非其著作中的专名。"
+      },
+      "conflicts": [
+        "rubric-feedback"
+      ]
+    },
+    {
+      "id": "five-w-one-h",
+      "zh": "5W1H 澄清",
+      "en": "5W1H Clarification",
+      "category": "interaction",
+      "aliases": [
+        "六何法",
+        "5W1H",
+        "要素澄清",
+        "谁何时何地"
+      ],
+      "oneliner": "把含糊需求拆成六个可答要素",
+      "inject": {
+        "positioning": "把含糊需求拆成六个可答的要素。",
+        "constraints": [
+          "逐项问清六要素，缺项标待定",
+          "每项给一句答案或写未知",
+          "把为什么答成目的，不答理由",
+          "收口确认最关键的一项"
+        ],
+        "skeleton": "Who…／When…／Where…／What…／Why…／How…\n关键项：…",
+        "lengthDiscipline": "六行封顶，不解释方法。"
+      },
+      "display": {
+        "what": "用 Who、What、When、Where、Why、How 六个问题补齐一件事的基本要素，把模糊需求变成可执行描述。",
+        "whenToUse": "需求只有一句话、任务边界不清、或跨团队交接时。",
+        "misuse": "六项都问了但没有一项问深；Why 写成'因为领导要求'；把清单当交付物，不确认关键项。",
+        "source": "吉卜林《Just So Stories》（1902）的六何仆从；后用于新闻写作与质量管理。"
+      },
+      "conflicts": [
+        "one-question"
+      ]
+    },
+    {
+      "id": "mirroring",
+      "zh": "复述确认",
+      "en": "Mirroring / Reflecting",
+      "category": "interaction",
+      "aliases": [
+        "镜像复述",
+        "积极倾听",
+        "确认理解",
+        "mirroring"
+      ],
+      "oneliner": "先复述对方意思，确认后再回应",
+      "inject": {
+        "positioning": "先复述对方的意思，确认后再回应。",
+        "constraints": [
+          "用对方的关键词复述一句",
+          "只复述内容不加评价",
+          "问一句我理解得对吗",
+          "确认后才给建议"
+        ],
+        "skeleton": "你的意思是…（关键词）？\n我理解对了吗？\n→ 确认后：…",
+        "lengthDiscipline": "复述不超过两句。"
+      },
+      "display": {
+        "what": "把对方说的话用他的关键词复述回去并请求确认，用来消除理解偏差、降低对方防御。",
+        "whenToUse": "需求沟通、冲突调解、对方情绪明显时；也是澄清模糊指令的最快方式。",
+        "misuse": "复述时夹带自己的判断（'你是想说这个方案不行吧'）；复述成逐字回放；确认完仍然按自己的想法做。",
+        "source": "Carl Rogers 的积极倾听与心理咨询中的反映技术。"
+      },
+      "conflicts": [
+        "nvc"
+      ]
+    },
+    {
+      "id": "rubric-feedback",
+      "zh": "量表反馈",
+      "en": "Rubric-Based Feedback",
+      "category": "interaction",
+      "aliases": [
+        "评分标准",
+        "rubric 反馈",
+        "标准证据改进",
+        "结构化点评"
+      ],
+      "oneliner": "先给标准，再给证据与改进",
+      "inject": {
+        "positioning": "先给标准再按标准给证据与改进。",
+        "constraints": [
+          "先列三条可判定标准",
+          "逐条对照给证据不泛评",
+          "每条给一个最小改进动作",
+          "收尾给总分与理由"
+        ],
+        "skeleton": "标准：①…②…③…\n①证据：…→改进：…\n总分：…（理由…）",
+        "lengthDiscipline": "标准不超过三条，一行一条。"
+      },
+      "display": {
+        "what": "先公开可判定的评价标准，再逐条对照给出具体证据与改进动作，让反馈可复核、可执行。",
+        "whenToUse": "评审方案、改稿、给下属反馈、或需要多人评价口径一致时。",
+        "misuse": "标准是不可判定的形容词（'不够有洞察'）；证据只有结论没有原文引用；改进动作等于'再想想'。",
+        "source": "rubric 评价传统；Hattie & Timperley, The Power of Feedback（2007）。"
+      },
+      "conflicts": [
+        "feynman"
+      ]
+    },
+    {
+      "id": "one-question",
+      "zh": "一次一问",
+      "en": "One Question at a Time",
+      "category": "interaction",
+      "aliases": [
+        "单问推进",
+        "逐问澄清",
+        "one question",
+        "访谈节奏"
+      ],
+      "oneliner": "一次只问一个，用答案定下一问",
+      "inject": {
+        "positioning": "一次只问一个问题，用答案决定下一问。",
+        "constraints": [
+          "每轮只发一个问题",
+          "问题须是封闭或半封闭",
+          "收到答案先归纳再问下一问",
+          "判定信息足够即停，不凑题数"
+        ],
+        "skeleton": "已知：…\n缺口：…\n下一问：…（为何问）",
+        "lengthDiscipline": "每轮不超过三行。"
+      },
+      "display": {
+        "what": "把访谈式澄清压缩成单问推进：每轮只问一个能缩小范围的问题，下一问由本轮答案决定。",
+        "whenToUse": "需求极其模糊、对方时间有限、或一次抛出长问卷会让人敷衍时。",
+        "misuse": "一口气列十个问题；问题太开放（'你还想要什么'）；答完不归纳，下一问和答案无关。",
+        "source": "用户访谈与教练式提问实践；单问原则见《The Mom Test》等访谈方法。"
+      },
+      "conflicts": [
+        "socratic",
+        "five-w-one-h"
+      ]
+    },
+    {
+      "id": "red-team",
+      "zh": "红队对抗",
+      "en": "Red Teaming",
+      "category": "interaction",
+      "aliases": [
+        "魔鬼代言人",
+        "反方质询",
+        "red team",
+        "找漏洞"
+      ],
+      "oneliner": "站到反方，找方案最致命一处",
+      "inject": {
+        "positioning": "站到反方专找方案里最致命的一处。",
+        "constraints": [
+          "先复述方案的关键承诺",
+          "列出三条最可能的攻击路径",
+          "每条给触发条件与后果",
+          "标出防守方最该补的一处"
+        ],
+        "skeleton": "承诺：…\n攻击①：…（触发…→后果…）\n最该补：…",
+        "lengthDiscipline": "攻击不超过三条，不人身化。"
+      },
+      "display": {
+        "what": "指定一方专门扮演攻击者，系统性地找方案的漏洞与失败路径，用来在真实对手之前发现问题。",
+        "whenToUse": "方案即将定稿、安全与风控评审、或团队已经形成共识而没人敢反对时。",
+        "misuse": "攻击停在'我觉得不行'；把红队做成互相人身攻击；只攻击稻草人版本。",
+        "source": "军事红队传统；天主教会封圣程序中的 devil's advocate（1587–1983）为著名前身。"
+      },
+      "conflicts": [
+        "steelman",
+        "hanlons-razor"
+      ]
+    },
+    {
+      "id": "nvc",
+      "zh": "非暴力沟通",
+      "en": "Nonviolent Communication",
+      "category": "interaction",
+      "aliases": [
+        "NVC",
+        "非暴力表达",
+        "观察感受需要请求",
+        "善意沟通"
+      ],
+      "oneliner": "说事实感受需要请求，不评判",
+      "inject": {
+        "positioning": "把一句指责改写成观察、感受、需要、请求四段。",
+        "constraints": [
+          "先写观察，不带评价词",
+          "只写情绪词作感受",
+          "把需要写在自己身上",
+          "给一个具体且可被拒绝的请求"
+        ],
+        "skeleton": "观察：…（事实）\n感受：…（情绪词）\n需要：…（我的）\n请求：…（具体、可拒绝）",
+        "lengthDiscipline": "四段各一句，不夹带旧账。"
+      },
+      "display": {
+        "what": "用观察、感受、需要、请求四段把指责改写成对方能接住的表达，既说清自己的处境又保留对方拒绝的空间。",
+        "whenToUse": "有冲突要表达不满、或一句话说出口就会伤关系的时候。",
+        "misuse": "观察段塞评价（你总是…）；感受写成我觉得你不尊重我；请求变成命令。",
+        "source": "Marshall Rosenberg《Nonviolent Communication: A Language of Life》(1999)。"
+      },
+      "conflicts": [
+        "mirroring"
+      ]
+    }
+  ],
+  "conflictRules": [
+    {
+      "pair": [
+        "first-principles",
+        "reverse-engineering"
+      ],
+      "rule": "问'为什么必须这样、成本底线在哪'用第一性原理；问'这成品怎么实现的'用逆向工程。同轮都需要时：先逆向拆出结构，再用第一性原理校验其中一条关键假设，不要两头同时展开。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "first-principles",
+        "analogy"
+      ],
+      "rule": "类比只负责生成候选方案，结论必须用第一性原理或数据校验；不得把'别的行业也这样'当论证。",
+      "preferred": "first-principles",
+      "preferWhen": "需要下结论时"
+    },
+    {
+      "pair": [
+        "first-principles",
+        "assumption-busting"
+      ],
+      "rule": "要快速找到破局点用假设破除；要重建成本结构或物理底线用第一性原理。假设破除删完假设后若仍需要重推，接第一性原理。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "pyramid",
+        "scqa"
+      ],
+      "rule": "对方已认同背景、只要结论时用金字塔；需要先建立共识或对外说服时用 SCQA 铺完情境与冲突再落回答。两者不叠加。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "pyramid",
+        "what-so-what"
+      ],
+      "rule": "要立论、争资源用金字塔；要解读已有数据或复盘用事实-解读-行动。同一篇里不要在结论树中插入独立的数据解读段。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "elevator",
+        "pyramid"
+      ],
+      "rule": "时长不超过一分钟、只需一句主张时用电梯演讲；有十分钟且需要论据树时用金字塔。可以先电梯演讲再金字塔，不可先金字塔再压成电梯。",
+      "preferred": "elevator",
+      "preferWhen": "对方只给一次开口机会"
+    },
+    {
+      "pair": [
+        "prep",
+        "star"
+      ],
+      "rule": "讲主张、答'你怎么看'用 PREP；讲经历、答'你做过什么'用 STAR。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "issue-tree",
+        "mece"
+      ],
+      "rule": "拆概念边界用 MECE；拆待验证问题用议题树，子节点必须是可判真假的命题。议题树每一层的切分仍应满足 MECE。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "hypothesis-driven",
+        "issue-tree"
+      ],
+      "rule": "先议题树拆出候选分支，再对优先分支立假设验证；不要跳过拆解直接假设，也不要拆完不收敛。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "abductive",
+        "deductive"
+      ],
+      "rule": "前提确定为真用演绎；只有现象、没有可信前提用溯因，并标注'这是最佳解释，非结论'。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "bayesian",
+        "fermi"
+      ],
+      "rule": "有先验与证据强度可用时用贝叶斯更新；一无所知只要量级时用费米估算。费米结果不得反过来当贝叶斯的精确先验。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "counterfactual",
+        "premortem"
+      ],
+      "rule": "结果已发生、要归因用反事实推演；结果未发生、要排险用事前验尸。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "reductio",
+        "steelman"
+      ],
+      "rule": "要证伪一个命题用反证；要理解对手用钢人化。同一条论证不得既当最强版本又当攻击对象。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "red-team",
+        "steelman"
+      ],
+      "rule": "顺序固定：先钢人化再红队。红队只能攻击钢人化之后的版本，否则视为稻草人，结论作废。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "expected-value",
+        "weighted-matrix"
+      ],
+      "rule": "准则明确、结果确定用加权矩阵；结果带概率分布用期望值。可以串联：先用矩阵筛掉明显不行的，再对剩下两个算期望。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "expected-value",
+        "minimax-regret"
+      ],
+      "rule": "能承受最坏分支用期望值；一次失败就出局（有生存风险）改用最小最大后悔。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "eisenhower",
+        "rice"
+      ],
+      "rule": "个人待办排时间用四象限；团队需求排优先级用 RICE。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "cost-benefit",
+        "rice"
+      ],
+      "rule": "已确定要做、只需判断值不值用成本收益；一堆需求要先排序用 RICE。RICE 的影响分不得替代成本收益测算。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "reversibility",
+        "weighted-matrix"
+      ],
+      "rule": "先判门型：双向门用最小试验快速试错，不必打分；只有单向门（不可逆、代价高）才值得上加权矩阵。",
+      "preferred": "reversibility",
+      "preferWhen": "决策尚未开始讨论时"
+    },
+    {
+      "pair": [
+        "premortem",
+        "reverse-brainstorm"
+      ],
+      "rule": "项目或方案的风险排布用事前验尸，必须落到预防动作与信号；创意突破用反向头脑风暴，必须反转成应做清单。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "design-thinking",
+        "six-hats"
+      ],
+      "rule": "要从问题走到方案用双钻；要消解立场冲突、并行评估价值与风险用六顶思考帽。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "scamper",
+        "triz"
+      ],
+      "rule": "有明确技术矛盾（改善 A 必牺牲 B）用 TRIZ；只是缺选项用 SCAMPER。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "morphological",
+        "scamper"
+      ],
+      "rule": "要穷举组合找市场空白用形态分析；要单点改造现有对象用 SCAMPER。同轮只选一个，避免选项爆炸。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "one-question",
+        "socratic"
+      ],
+      "rule": "收集事实、补信息缺口用一次一问；挑战假设、检验论证用苏格拉底追问。同轮只用一种提问策略。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "five-w-one-h",
+        "one-question"
+      ],
+      "rule": "要一次补齐要素清单用 5W1H；要在对话里逐步追问、每问由上一答决定用一次一问。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "feynman",
+        "rubric-feedback"
+      ],
+      "rule": "自检自己是否真懂用费曼；评价别人产出并给出改进用量表反馈。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "jtbd",
+        "stakeholder-map"
+      ],
+      "rule": "问'用户要完成什么'用 JTBD；问'谁推动、谁阻碍'用利益相关者地图。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "socratic",
+        "elenchus"
+      ],
+      "rule": "想让他自己产出结论用苏格拉底提问（问前提、问依据）；想拆掉他一个已经站住的前提用反诘（顺着推、逼出矛盾）。提问是加法，反诘是减法，同一轮不要既问又拆。",
+      "preferred": "socratic",
+      "preferWhen": "对方还没有结论、需要被引导说出来时优先提问；对方已有结论且很确定时优先反诘。"
+    },
+    {
+      "pair": [
+        "swot",
+        "pestel"
+      ],
+      "rule": "先扫外部再用 SWOT：PESTEL 产出外部变量清单，SWOT 的机会与威胁要引用其中条目；同轮先跑 PESTEL 再填 SWOT，不并列输出。",
+      "preferred": "pestel",
+      "preferWhen": "用户还没说清外部发生了什么变化，只说要做个盘点。"
+    },
+    {
+      "pair": [
+        "swot",
+        "porter-five-forces"
+      ],
+      "rule": "判断行业值不值得进用五力，判断自己在这个行业怎么站住用 SWOT；两套都要时先五力定行业吸引力，再用 SWOT 定自身策略。",
+      "preferred": "porter-five-forces",
+      "preferWhen": "用户问的是行业利润空间与进入决策。"
+    },
+    {
+      "pair": [
+        "occams-razor",
+        "hanlons-razor"
+      ],
+      "rule": "解释自然现象或技术故障用奥卡姆数假设，解释人的行为用汉隆先排疏忽；同一件事既涉机制又涉人时，先奥卡姆定机制，再汉隆定归因。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "occams-razor",
+        "abductive"
+      ],
+      "rule": "溯因负责生成候选解释，奥卡姆负责在候选之间取舍；同一轮先用溯因列三条解释，再用奥卡姆删到一条，顺序不要反过来。",
+      "preferred": "abductive",
+      "preferWhen": "还没有任何候选解释时。"
+    },
+    {
+      "pair": [
+        "hanlons-razor",
+        "red-team"
+      ],
+      "rule": "日常协作里的冒犯先按汉隆排除疏忽，只有做安全评估或对抗演练时才按红队假设恶意；两者不要同时套在同一个对象上。",
+      "preferred": null,
+      "preferWhen": null
+    },
+    {
+      "pair": [
+        "toyota-a3",
+        "eight-d"
+      ],
+      "rule": "单点异常且需跨部门闭环到防再发用 8D，日常改进或只需向上讲清一个问题用 A3；8D 的 D4 可直接用 A3 的根因段承载，别两份各写一遍。",
+      "preferred": "toyota-a3",
+      "preferWhen": "只需要一页纸让人看懂问题与对策。"
+    },
+    {
+      "pair": [
+        "toyota-a3",
+        "five-why"
+      ],
+      "rule": "A3 是承载格式，五问是其中根因段的分析手法，同轮可嵌套：先用五问追到机制层，再把追问链写进 A3 的根因格，不要并列成两个方法。",
+      "preferred": "toyota-a3",
+      "preferWhen": "要交付一页纸而不是只给一段分析。"
+    },
+    {
+      "pair": [
+        "smart",
+        "grow"
+      ],
+      "rule": "要定一条可验收的目标用 SMART，要推进一次对话让对方自己承诺行动用 GROW；GROW 的 G 段可先用 SMART 写清，但不要连着做两轮目标拆解。",
+      "preferred": "smart",
+      "preferWhen": "用户要的是一句可验收的目标而不是行动计划。"
+    },
+    {
+      "pair": [
+        "grow",
+        "socratic"
+      ],
+      "rule": "目标是让对方自己产出行动用 GROW，目标是检验对方某个信念站不站得住用苏格拉底式提问；前者往前推进，后者往回拆前提，同轮只选一个方向。",
+      "preferred": "grow",
+      "preferWhen": "对方已经在求助并愿意承诺下一步。"
+    },
+    {
+      "pair": [
+        "pdca",
+        "design-thinking"
+      ],
+      "rule": "流程已定义、要小步改进用 PDCA，问题还没定义、要探索方案用双钻；同轮先用双钻收敛方案，再用 PDCA 跑第一轮验证，不要混成一张图。",
+      "preferred": "pdca",
+      "preferWhen": "已有可运行流程，只差一次受控改动。"
+    },
+    {
+      "pair": [
+        "mandala-9",
+        "morphological"
+      ],
+      "rule": "要穷举维度组合找形态学空格用形态分析，要围绕一个中心向八个方向发散用九宫格；九宫格铺量、形态分析组合，先九宫格再形态分析会重复计数。",
+      "preferred": "mandala-9",
+      "preferWhen": "只是想把一个主题的周边想全，不需要组合。"
+    },
+    {
+      "pair": [
+        "design-sprint",
+        "design-thinking"
+      ],
+      "rule": "要一套可执行的一周节奏用设计冲刺，要原则性的探索框架用双钻；冲刺内部本就按双钻走，同轮只输出冲刺的五天安排，不再复述双钻。",
+      "preferred": "design-sprint",
+      "preferWhen": "有决策人、凑得出五天、需要在周内拿到用户证据。"
+    },
+    {
+      "pair": [
+        "user-story-map",
+        "jtbd"
+      ],
+      "rule": "先问用户要完成什么用 JTBD 得到任务，再把任务铺成旅程地图切发布线用故事地图；顺序是先 JTBD 后地图，反过来只会得到一堆没目标的功能。",
+      "preferred": "jtbd",
+      "preferWhen": "还不知道用户到底要完成什么。"
+    },
+    {
+      "pair": [
+        "aarrr",
+        "rice"
+      ],
+      "rule": "要定位增长卡在哪一段用 AARRR，要在候选功能之间排序用 RICE；AARRR 找出最窄段之后，再用 RICE 排该段内的具体动作。",
+      "preferred": "aarrr",
+      "preferWhen": "用户问的是为什么增长不动。"
+    },
+    {
+      "pair": [
+        "nvc",
+        "mirroring"
+      ],
+      "rule": "只需让对方感到被听懂、把对话接下去用复述确认，有冲突要表达自己的不满又不伤关系用非暴力沟通；先复述再表达，别在同一句里又复述又指责。",
+      "preferred": "mirroring",
+      "preferWhen": "对方情绪高、还没准备好听你的诉求。"
+    }
+  ]
+}

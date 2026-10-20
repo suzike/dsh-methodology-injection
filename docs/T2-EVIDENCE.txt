@@ -1,0 +1,271 @@
+
+==============================================================================
+1. arm 会话 A（turn 模式，默认）
+==============================================================================
+{
+  "status": 200,
+  "armed": {
+    "methodId": "pyramid",
+    "name": "金字塔原理",
+    "assists": [],
+    "sinceTurn": 1,
+    "mode": "turn"
+  },
+  "budget": 150
+}
+
+==============================================================================
+2. 组装：context 通道渲染出的契约（逐字节稳定，两次一致）
+==============================================================================
+[[METHOD:pyramid]]
+先给结论，再用分组论据自上而下支撑。
+先写结论，不铺垫任何背景
+分组列论据，同层同粒度
+按一种顺序排列同层并注明
+不引入未归组的新观点
+结论
+├论据1→依据
+├论据2→依据
+└论据3→依据
+每点一行，不写开场与复述。
+
+同一会话两次渲染 === true；长度 127 字符
+
+==============================================================================
+3. 轮次边界 agent/inbox/claimed → pre-step（框架已把契约追加进 step）
+==============================================================================
+step 消息数 2（框架已注入，Host 不追加）
+
+==============================================================================
+4. 会话 B：context 没到（模拟框架未追加），pre-step 兜底
+==============================================================================
+step 消息数 2
+追加消息 source = {"kind":"plugin","plugin":"dsh-methodology-injection","form":"notice","summary":"方法论契约（Host 兜底注入）"}
+追加文本首行 = [[METHOD:pyramid]]
+同一轮重复调用 step 消息数 1（不得二次注入）
+
+==============================================================================
+5. 留痕：user/message 里出现 marker → trace（只存 methodId/hash/turn）
+==============================================================================
+{
+  "status": 200,
+  "trace": {
+    "turn": 1,
+    "methodId": "pyramid",
+    "name": "金字塔原理",
+    "contract": "[[METHOD:pyramid]]\n先给结论，…",
+    "contractHash": "deb8a7e98d7258a8",
+    "assists": [],
+    "ts": 1792505754464
+  }
+}
+无留痕的轮次 → 404 {"error":{"code":"trace-not-found","message":"第 7 轮没有方法论留痕"}}
+
+==============================================================================
+6. GET /api/methodology.diagnostics（最近一次注入真相）
+==============================================================================
+{
+  "ok": true,
+  "armedSessions": 2,
+  "catalogSize": 65,
+  "version": "0.1.0",
+  "contractRegistered": true,
+  "contextOrder": 230,
+  "catalogPath": "E:\\Agentic_Engineering\\DSH\\插件开发\\Dsh-methodology-injection\\catalog\\methods.json",
+  "statePath": "C:\\Users\\Lenovo\\AppData\\Local\\Temp\\dsh-method-evidence-0XvhZe\\dsh-methodology-injection\\state.json",
+  "stateBytes": 2106,
+  "historySize": 1,
+  "lastInjection": {
+    "sessionId": "session-B",
+    "turn": 1,
+    "step": 1,
+    "ts": "2026-10-20T14:15:54.461Z",
+    "methodIds": [
+      "pyramid"
+    ],
+    "channel": "pre-step",
+    "landed": true,
+    "tokenEstimate": 100,
+    "contractHash": "deb8a7e98d7258a8",
+    "stage": "landed",
+    "note": "fallback"
+  },
+  "sessions": [
+    {
+      "sessionId": "session-B",
+      "turn": 1,
+      "armed": [
+        "pyramid:turn"
+      ],
+      "activeNow": [
+        "pyramid"
+      ],
+      "channel": {
+        "verified": false,
+        "degraded": true,
+        "pendingTurn": null
+      },
+      "lastInjection": {
+        "sessionId": "session-B",
+        "turn": 1,
+        "step": 1,
+        "ts": "2026-10-20T14:15:54.461Z",
+        "methodIds": [
+          "pyramid"
+        ],
+        "channel": "pre-step",
+        "landed": true,
+        "tokenEstimate": 100,
+        "contractHash": "deb8a7e98d7258a8",
+        "stage": "landed",
+        "note": "fallback"
+      }
+    },
+    {
+      "sessionId": "session-A",
+      "turn": 1,
+      "armed": [
+        "pyramid:turn"
+      ],
+      "activeNow": [
+        "pyramid"
+      ],
+      "channel": {
+        "verified": true,
+        "degraded": false,
+        "pendingTurn": null,
+        "verifiedAt": "2026-10-20T14:15:54.453Z"
+      },
+      "lastInjection": {
+        "sessionId": "session-A",
+        "turn": 1,
+        "step": 1,
+        "ts": "2026-10-20T14:15:54.453Z",
+        "methodIds": [
+          "pyramid"
+        ],
+        "channel": "context",
+        "landed": true,
+        "tokenEstimate": 100,
+        "contractHash": "deb8a7e98d7258a8",
+        "stage": "landed"
+      }
+    }
+  ]
+}
+
+==============================================================================
+7. state.json 落盘内容（绝不含用户原文）
+==============================================================================
+{
+  "version": 1,
+  "updatedAt": "2026-10-20T14:15:54.464Z",
+  "sessions": {
+    "session-A": {
+      "sessionId": "session-A",
+      "lastTurn": 1,
+      "turnOpen": true,
+      "lastSeen": "2026-10-20T14:15:54.464Z",
+      "entries": [
+        {
+          "methodId": "pyramid",
+          "mode": "turn",
+          "assists": [],
+          "armedAt": "2026-10-20T14:15:54.447Z",
+          "armedForTurn": 1,
+          "appliedTurns": [
+            1
+          ]
+        }
+      ],
+      "channel": {
+        "verified": true,
+        "degraded": false,
+        "pendingTurn": null,
+        "verifiedAt": "2026-10-20T14:15:54.453Z"
+      },
+      "lastInjection": {
+        "sessionId": "session-A",
+        "turn": 1,
+        "step": 1,
+        "ts": "2026-10-20T14:15:54.453Z",
+        "methodIds": [
+          "pyramid"
+        ],
+        "channel": "context",
+        "landed": true,
+        "tokenEstimate": 100,
+        "contractHash": "deb8a7e98d7258a8",
+        "stage": "landed"
+      }
+    },
+    "session-B": {
+      "sessionId": "session-B",
+      "lastTurn": 1,
+      "turnOpen": true,
+      "lastSeen": "2026-10-20T14:15:54.461Z",
+      "entries": [
+        {
+          "methodId": "pyramid",
+          "mode": "turn",
+          "assists": [],
+          "armedAt": "2026-10-20T14:15:54.456Z",
+          "armedForTurn": 1,
+          "appliedTurns": [
+            1
+          ]
+        }
+      ],
+      "channel": {
+        "verified": false,
+        "degraded": true,
+        "pendingTurn": null
+      },
+      "lastInjection": {
+        "sessionId": "session-B",
+        "turn": 1,
+        "step": 1,
+        "ts": "2026-10-20T14:15:54.461Z",
+        "methodIds": [
+          "pyramid"
+        ],
+        "channel": "pre-step",
+        "landed": true,
+        "tokenEstimate": 100,
+        "contractHash": "deb8a7e98d7258a8",
+        "stage": "landed",
+        "note": "fallback"
+      }
+    }
+  },
+  "history": [
+    {
+      "methodId": "pyramid",
+      "contractHash": "deb8a7e98d7258a8",
+      "sessionId": "session-A",
+      "turn": 1,
+      "ts": "2026-10-20T14:15:54.464Z"
+    }
+  ]
+}
+
+含用户原文？false
+含 marker？false（应为 false：指纹只存 hash）
+
+==============================================================================
+8. 释放：armed 清空，recent 保留
+==============================================================================
+{
+  "status": 200,
+  "armed": null,
+  "recent": [
+    {
+      "turn": 1,
+      "methodId": "pyramid",
+      "name": "金字塔原理",
+      "contractHash": "deb8a7e98d7258a8",
+      "ts": 1792505754464
+    }
+  ]
+}
+释放后 context 文本长度 = 0
