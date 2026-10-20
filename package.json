@@ -9,13 +9,11 @@
     "./client": {
       "default": "./lib/client.js"
     },
-    "./locale/*.json": "./locale/*.json",
     "./package.json": "./package.json"
   },
   "files": [
     "lib",
     "catalog",
-    "locale",
     "icon.svg",
     "cordis.patch.yml",
     "README.md"

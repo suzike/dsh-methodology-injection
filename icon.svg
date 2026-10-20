@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="方法论注入">
+  <defs>
+    <linearGradient id="ig" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7C6CFF"/>
+      <stop offset="1" stop-color="#4FD1C5"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="#0C1220"/>
+  <rect x="4" y="4" width="120" height="120" rx="28" fill="none" stroke="url(#ig)" stroke-opacity="0.55" stroke-width="2"/>
+  <path d="M64 28 L73.5 54.5 L100 64 L73.5 73.5 L64 100 L54.5 73.5 L28 64 L54.5 54.5 Z" fill="url(#ig)"/>
+  <circle cx="64" cy="64" r="7" fill="#0C1220"/>
+  <circle cx="64" cy="64" r="3" fill="#F5F7FA"/>
+</svg>

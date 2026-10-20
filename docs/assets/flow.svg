@@ -1,0 +1,133 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" width="1600" height="720" role="img" aria-label="方法论注入的注入链路">
+  <defs>
+    <linearGradient id="fgbg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0A0E16"/>
+      <stop offset="1" stop-color="#080B12"/>
+    </linearGradient>
+    <linearGradient id="flaccent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7C6CFF"/>
+      <stop offset="1" stop-color="#4FD1C5"/>
+    </linearGradient>
+    <pattern id="fgrid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#FFFFFF" stroke-opacity="0.03" stroke-width="1"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="#6E7A90"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="720" fill="url(#fgbg)"/>
+  <rect width="1600" height="720" fill="url(#fgrid)"/>
+
+  <g font-family="'JetBrains Mono','SFMono-Regular',Consolas,monospace" font-size="13" fill="#7A8296">
+    <text x="72" y="64">INJECTION PATH</text>
+  </g>
+  <text x="72" y="106" font-size="34" font-weight="700" fill="#F2F4F8" font-family="'Noto Sans SC','PingFang SC',sans-serif">方法论是怎么进到模型眼里的</text>
+  <rect x="72" y="124" width="120" height="3" rx="1.5" fill="url(#flaccent)"/>
+  <text x="72" y="162" font-size="16" fill="#6F7788" font-family="'Noto Sans SC','PingFang SC',sans-serif">客户端只决定“用哪个”，Host 只决定“怎么送进去”，框架负责把契约追加进这一轮的 step。</text>
+
+  <!-- 泳道标签 -->
+  <g font-family="'JetBrains Mono','SFMono-Regular',Consolas,monospace" font-size="12" fill="#5B6478" letter-spacing="1">
+    <text x="72" y="222">CLIENT</text>
+    <text x="72" y="392">HOST</text>
+    <text x="72" y="562">FRAMEWORK</text>
+    <text x="72" y="672">SESSION LOG</text>
+  </g>
+  <g stroke="#FFFFFF" stroke-opacity="0.06">
+    <path d="M72 236 H1528"/>
+    <path d="M72 406 H1528"/>
+    <path d="M72 576 H1528"/>
+  </g>
+
+  <!-- 第一行：client -->
+  <g font-family="'Noto Sans SC','PingFang SC',sans-serif">
+    <g>
+      <rect x="180" y="252" width="252" height="108" rx="14" fill="#0F1522" stroke="#FFFFFF" stroke-opacity="0.09"/>
+      <text x="204" y="288" font-size="17" fill="#E7EAF0">点一下 ✦ 方法</text>
+      <text x="204" y="316" font-size="13" fill="#6F7788">65 条 / 6 类 / 别名搜索</text>
+      <text x="204" y="338" font-size="13" fill="#6F7788">键盘 ↑↓ 选中，⌘K 打开</text>
+    </g>
+    <path d="M444 306 H492" stroke="#6E7A90" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g>
+      <rect x="504" y="252" width="252" height="108" rx="14" fill="#0F1522" stroke="#7C6CFF" stroke-opacity="0.45"/>
+      <text x="528" y="288" font-size="17" fill="#E7EAF0">POST /methodology.arm</text>
+      <text x="528" y="316" font-size="13" fill="#6F7788">只发 sessionId + methodId</text>
+      <text x="528" y="338" font-size="13" fill="#6F7788">不发送、不缓存任何正文</text>
+    </g>
+    <path d="M768 306 H816" stroke="#6E7A90" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g>
+      <rect x="828" y="252" width="252" height="108" rx="14" fill="#0F1522" stroke="#FFFFFF" stroke-opacity="0.09"/>
+      <text x="852" y="288" font-size="17" fill="#E7EAF0">待生效条</text>
+      <text x="852" y="316" font-size="13" fill="#6F7788">输入框上方一行</text>
+      <text x="852" y="338" font-size="13" fill="#6F7788">× 取消 → release</text>
+    </g>
+  </g>
+
+  <!-- 第二行：host -->
+  <g font-family="'Noto Sans SC','PingFang SC',sans-serif">
+    <g>
+      <rect x="180" y="422" width="252" height="108" rx="14" fill="#0F1522" stroke="#FFFFFF" stroke-opacity="0.09"/>
+      <text x="204" y="458" font-size="17" fill="#E7EAF0">store（按会话）</text>
+      <text x="204" y="486" font-size="13" fill="#6F7788">Map&lt;sessionId, arm&gt;</text>
+      <text x="204" y="508" font-size="13" fill="#6F7788">turn / pinned / stack 三态</text>
+    </g>
+    <path d="M444 476 H492" stroke="#6E7A90" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g>
+      <rect x="504" y="422" width="252" height="108" rx="14" fill="#0F1522" stroke="#7C6CFF" stroke-opacity="0.45"/>
+      <text x="528" y="458" font-size="17" fill="#E7EAF0">catalog → 契约文本</text>
+      <text x="528" y="486" font-size="13" fill="#6F7788">四段纯文本，逐字节稳定</text>
+      <text x="528" y="508" font-size="13" fill="#6F7788">超 150 token 直接拒绝</text>
+    </g>
+    <path d="M768 476 H816" stroke="#6E7A90" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g>
+      <rect x="828" y="422" width="252" height="108" rx="14" fill="#0F1522" stroke="#4FD1C5" stroke-opacity="0.4"/>
+      <text x="852" y="458" font-size="17" fill="#E7EAF0">systemPrompt.context</text>
+      <text x="852" y="486" font-size="13" fill="#6F7788">order 230，interpolate:false</text>
+      <text x="852" y="508" font-size="13" fill="#6F7788">未 arm 时返回空串</text>
+    </g>
+  </g>
+
+  <!-- 第三行：framework -->
+  <g font-family="'Noto Sans SC','PingFang SC',sans-serif">
+    <g>
+      <rect x="180" y="592" width="252" height="92" rx="14" fill="#0F1522" stroke="#FFFFFF" stroke-opacity="0.09"/>
+      <text x="204" y="626" font-size="16" fill="#E7EAF0">折成 runtime-context</text>
+      <text x="204" y="652" font-size="13" fill="#6F7788">同文本快照去重</text>
+    </g>
+    <path d="M444 638 H492" stroke="#6E7A90" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g>
+      <rect x="504" y="592" width="252" height="92" rx="14" fill="#0F1522" stroke="#FFFFFF" stroke-opacity="0.09"/>
+      <text x="528" y="626" font-size="16" fill="#E7EAF0">追加进本轮 step</text>
+      <text x="528" y="652" font-size="13" fill="#6F7788">用户气泡不被改写</text>
+    </g>
+    <path d="M768 638 H816" stroke="#6E7A90" stroke-width="1.5" marker-end="url(#arrow)"/>
+    <g>
+      <rect x="828" y="592" width="252" height="92" rx="14" fill="#0F1522" stroke="#FFFFFF" stroke-opacity="0.09"/>
+      <text x="852" y="626" font-size="16" fill="#E7EAF0">模型按契约作答</text>
+      <text x="852" y="652" font-size="13" fill="#6F7788">pre-step 兜底仅一次</text>
+    </g>
+  </g>
+
+  <!-- 右侧：JSONL 与徽章 -->
+  <g transform="translate(1150 200)" font-family="'JetBrains Mono','SFMono-Regular',Consolas,monospace">
+    <rect x="0" y="0" width="378" height="330" rx="16" fill="#0F1522" stroke="#FFFFFF" stroke-opacity="0.09"/>
+    <text x="24" y="34" font-size="12" fill="#5B6478" letter-spacing="1">SESSION.JSONL</text>
+    <text x="24" y="72" font-size="13" fill="#8B93A7">user: 把这段需求写成周报…</text>
+    <text x="24" y="104" font-size="13" fill="#C9C2FF">[[METHOD:pyramid]]</text>
+    <text x="24" y="126" font-size="13" fill="#6F7788">先给结论，再用分组论据…</text>
+    <text x="24" y="148" font-size="13" fill="#6F7788">先写结论，不铺垫背景</text>
+    <text x="24" y="170" font-size="13" fill="#6F7788">分组列论据，同层同粒度</text>
+    <text x="24" y="206" font-size="13" fill="#8B93A7">assistant: 本周进度…</text>
+    <path d="M24 232 H354" stroke="#FFFFFF" stroke-opacity="0.07"/>
+    <text x="24" y="262" font-size="12" fill="#5B6478" letter-spacing="1">TRACE · CONTENT-FREE</text>
+    <text x="24" y="288" font-size="13" fill="#6F7788">methodId  pyramid</text>
+    <text x="24" y="310" font-size="13" fill="#6F7788">contractHash  deb8a7e9…</text>
+  </g>
+  <path d="M1084 476 H1150 V420" stroke="#4FD1C5" stroke-opacity="0.5" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+  <g font-family="'Noto Sans SC','PingFang SC',sans-serif" font-size="13" fill="#6F7788">
+    <text x="1150" y="576">轮末徽章只读 trace：</text>
+    <text x="1150" y="600">显示方法名 + 契约全文 + 换一个</text>
+    <text x="1150" y="624">不解析时间线，不猜上一轮用了什么</text>
+  </g>
+</svg>
