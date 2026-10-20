@@ -40,13 +40,12 @@
 - [隐私边界](#隐私边界)
 - [加一个自己的方法论](#加一个自己的方法论)
 - [开发](#开发)
+- [实测状态](#实测状态)
 - [已知边界](#已知边界)
 
 ---
 
 ## 它长什么样
-
-<!-- SHOTS:GALLERY -->
 
 界面上只有三处新增，都不占地方：
 
@@ -213,7 +212,7 @@ trace 是**内容无关**的：只有方法 id、hash 和时间戳，没有你�
 - ❌ 不保存你的 prompt，不保存模型的回答，不保存文件路径
 - ❌ 不发任何请求到本机之外
 - ✅ 只存：方法 id、契约文本 hash、turn 编号、时间戳、token 估算
-- ✅ 存储位置：`$DSH_HOME/dsh-methodology-injection.json`（原子写，临时文件 + rename）
+- ✅ 存储位置：`~/.dsh/dsh-methodology-injection/state.json`（目录级状态，临时文件 + rename 原子写）
 
 你可以随时打开那个 JSON 自己核对——里面找不到任何一句你打过的话。
 
@@ -271,6 +270,27 @@ catalog/      65 条方法论 + 43 组互斥裁决
 tests/        Host 契约测试与客户端接线测试
 docs/assets/  README 用图
 PROBE.md      真实的扩展点契约勘察报告（为什么这么接，全在这里）
+```
+
+---
+
+## 实测状态
+
+2026-10-20 在本机 DSH Web 上实测：
+
+| 项 | 结果 |
+| --- | --- |
+| `catalogSize` / `contractRegistered` / `contextOrder` | 65 / `true` / 230 |
+| `GET /api/methodology.diagnostics` | 200，返回 `lastInjection`（含 `stage`、`channel`、`contractHash`） |
+| `POST /api/methodology.arm` → `GET …state` | 200，写入后回读一致（`armed.methodId` 与 `mode` 正确） |
+| `npm run verify` | typecheck 0 error；build 通过；`node --test` **25 pass / 0 fail** |
+| 目录校验 | 65 条全部落在 150 token 预算内（正文 83–117） |
+
+已知未在本机复现的一步：**armer → 用户发送 → `lastInjection.landed: true`** 的完整闭环，需要一次真实用户回合才能观测（arming 之后、消息发出之前，`stage` 停在 `armed` 是预期行为）。用一下就知道：
+
+```bash
+# 选一个方法论，随便发一句话，然后看
+curl -s http://127.0.0.1:60880/api/methodology.diagnostics | grep -o '"landed":[a-z]*'
 ```
 
 ---
